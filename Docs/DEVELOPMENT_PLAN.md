@@ -4,7 +4,7 @@ This document contains the detailed technical checklist for developing Audio Fil
 
 For an approachable release overview, see [`ROADMAP.md`](../ROADMAP.md). For the product-level rationale behind the differentiators, see [`PRODUCT_DIFFERENTIATION.md`](PRODUCT_DIFFERENTIATION.md). This detailed plan is a working document rather than a fixed promise. Features may move between releases as the project develops and technical dependencies become clearer.
 
-## Current Version: 0.1.0
+## Current Version: 0.1.0 
 
 Current capabilities:
 
