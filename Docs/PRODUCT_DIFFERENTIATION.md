@@ -1,6 +1,6 @@
 # Product Differentiation Strategy
 
-## Purpose
+## Purpose 
 
 Audio File Report is not intended to compete by displaying the largest possible number of meters. Its intended distinction is an explainable, evidence-first workflow for offline stereo-file analysis and quality control.
 
