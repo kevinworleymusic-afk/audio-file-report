@@ -25,3 +25,4 @@ Install the required packages with:
 
 ```bash
 python3 -m pip install numpy matplotlib
+```
