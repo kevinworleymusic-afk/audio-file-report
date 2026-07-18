@@ -8,14 +8,13 @@ import matplotlib.pyplot as plt
 
 # audio_path = Path("test_audio.wav")
 
-#2. Function definitions
-
 import sys
 import wave
 from pathlib import Path
-
 import matplotlib.pyplot as plt
 import numpy as np
+
+__version__ = "0.1.0"
 
 
 # 1. Get the WAV filename supplied in Terminal.
