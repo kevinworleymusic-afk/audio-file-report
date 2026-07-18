@@ -1,175 +1,190 @@
 # Audio File Report Roadmap
 
-This roadmap outlines the planned development of Audio File Report from a basic stereo WAV analyzer into a tested audio-analysis and quality-control tool.
+Audio File Report is developing from a basic stereo WAV inspector into an explainable stereo-analysis and quality-control tool.
 
-## Current Version: 0.1.0
+This roadmap gives an approachable overview of the planned releases. The full technical checklists, validation requirements, and implementation notes are available in the [Detailed Development Plan](docs/DEVELOPMENT_PLAN.md).
 
-Current capabilities:
+The roadmap is a working plan. Features may move between releases as the project develops and technical dependencies become clearer.
+
+## Intended Differentiation
+
+Audio File Report is intended to be more than a collection of meters and graphs. Its distinguishing workflow is:
+
+```text
+Inspect → Measure → Locate → Explain → Validate → Reproduce
+```
+
+Across the releases, the project aims to differentiate through:
+
+- Evidence-linked findings tied to exact time and frequency regions
+- Confidence and limitation indicators for heuristic conclusions
+- Linked level, spectral, stereo, and event views
+- Configurable QC rules with plain-language explanations
+- Controlled test signals and documented numerical tolerances
+- Reproducible analysis packages with settings, versions, and checksums
+- Clear separation between measured facts, estimates, warnings, and unsupported claims
+- Non-destructive analysis that never alters the source audio by default
+
+See [Product Differentiation](docs/PRODUCT_DIFFERENTIATION.md) for the full strategy.
+
+## 0.1.0 — Initial Stereo Analyzer
+
+Status: **Complete**
 
 - Read 16-bit stereo PCM WAV files
-- Report channel count
-- Report sample rate
-- Report bit depth
-- Report frame count
-- Calculate duration
+- Report basic file metadata and duration
 - Separate left and right channels
-- Apply a Hann window
-- Calculate an FFT for each channel
+- Apply a Hann window and calculate an FFT
 - Plot left and right frequency spectra
-- Display frequencies on a logarithmic axis
-- Accept a WAV filename through Terminal
-- Organize analysis into focused Python functions
+- Organize the program into focused functions
+- Publish the project and documentation on GitHub
 
-## Version 0.2.0 — File Handling and Command-Line Interface
+## 0.2.0 — Reliable CLI and File Handling
 
-- [ ] Replace basic `sys.argv` handling with `argparse`
-- [ ] Add a `--help` command
-- [ ] Add a `--version` command
-- [ ] Check whether the selected file exists
-- [ ] Confirm that the selected file is a valid WAV
-- [ ] Provide concise error messages
-- [ ] Display duration as `HH:MM:SS`
-- [ ] Report file size
-- [ ] Report estimated bitrate
-- [ ] Add `requirements.txt`
+Make the existing analyzer easier and safer to use.
 
-## Version 0.3.0 — Level Measurements
+- Replace manual argument handling with a proper command-line interface
+- Add help, version, brief, verbose, and quiet modes
+- Add clear graph display and saving controls
+- Validate file paths and WAV structure
+- Provide friendly errors and optional detailed diagnostics
+- Improve metadata formatting and dependency documentation
 
-Calculate measurements independently for both channels:
+**Differentiation focus:** Make technical analysis approachable without hiding diagnostic detail from advanced users.
 
-- [ ] Sample peak in linear amplitude
-- [ ] Sample peak in dBFS
-- [ ] RMS in linear amplitude
-- [ ] RMS in dBFS
-- [ ] Crest factor
-- [ ] DC offset
-- [ ] Minimum and maximum sample values
-- [ ] Clipped-sample count
-- [ ] Percentage of clipped samples
-- [ ] Near-clipping warning
-- [ ] Leading silence duration
-- [ ] Trailing silence duration
-- [ ] Total silence percentage
-- [ ] Average left/right level difference
+## 0.3.0 — Levels and Dynamics
 
-## Version 0.4.0 — Spectral Analysis
+Measure how high, average, variable, silent, or potentially damaged each channel is over time.
 
-- [ ] Detect the dominant frequency in each channel
-- [ ] Report the strongest spectral peaks
-- [ ] Add adjustable FFT size
-- [ ] Add selectable window functions
-- [ ] Add selectable frequency range
-- [ ] Add spectral averaging
-- [ ] Add peak-hold spectrum
-- [ ] Add spectral centroid
-- [ ] Add spectral bandwidth
-- [ ] Measure energy in user-defined frequency bands
-- [ ] Add octave or fractional-octave smoothing
-- [ ] Add left and right spectrograms
-- [ ] Save spectrum plots as PNG files
+- Peak, RMS, headroom, crest factor, and DC offset
+- Windowed level and dynamic-envelope analysis
+- Clipping, near-clipping, silence, and dropout detection
+- Level distribution and left/right level comparison
+- Peak-normalization previews without modifying the source audio
+- Controlled test files with known expected measurements
 
-## Version 0.5.0 — Stereo and Phase Analysis
+**Differentiation focus:** Turn level statistics into time-located, testable events rather than presenting only whole-file meter values.
 
-- [ ] Calculate left/right level balance
-- [ ] Calculate channel correlation
-- [ ] Detect possible polarity inversion
-- [ ] Detect possible dual-mono files
-- [ ] Detect possible duplicated channels
-- [ ] Detect a silent or nearly silent channel
-- [ ] Convert left/right audio to mid/side
-- [ ] Compare mid and side energy
-- [ ] Estimate stereo width
-- [ ] Estimate mono compatibility
-- [ ] Estimate interchannel time delay
-- [ ] Calculate frequency-dependent correlation
-- [ ] Plot mid and side spectra
-- [ ] Add a goniometer or vectorscope display
+## 0.4.0 — Spectral Analysis
 
-## Version 0.6.0 — Expanded WAV Support
+Describe which frequencies are present and how spectral content changes over time.
 
-- [ ] Support mono WAV files
-- [ ] Support 8-bit PCM
-- [ ] Confirm complete 16-bit PCM support
-- [ ] Support 24-bit PCM
-- [ ] Support 32-bit PCM
-- [ ] Support 32-bit floating-point WAV files
-- [ ] Support WAV extensible headers
-- [ ] Process large files without loading all samples into memory
-- [ ] Investigate optional AIFF support
-- [ ] Investigate optional FLAC support
+- Dominant frequencies and spectral peak detection
+- Configurable FFT, window, smoothing, range, and normalization
+- Averaged and peak-hold spectra
+- Spectrogram, octave bands, spectral difference, and waterfall views
+- Numeric band-energy tables and spectral-data export
+- Optional chromagram and Constant-Q music-analysis views
+- Controlled frequency-domain validation
 
-## Version 0.7.0 — Visualization
+**Differentiation focus:** Connect multiple spectral views to exact numeric data, shared channel normalization, selected regions, and exportable evidence.
 
-- [ ] Plot left and right waveforms
-- [ ] Add separate and overlaid channel views
-- [ ] Plot peak envelopes
-- [ ] Plot RMS envelopes
-- [ ] Mark clipped regions
-- [ ] Mark silence regions
-- [ ] Display DC offset
-- [ ] Add selected-time-range analysis
-- [ ] Add phase and correlation plots
-- [ ] Save all visualizations
+## 0.5.0 — Stereo, Phase, and Spatial-Cue Analysis
 
-## Version 0.8.0 — Quality-Control Profiles
+Measure how the left and right channels relate and how the file behaves when combined to mono.
 
-- [ ] Load delivery requirements from a JSON profile
-- [ ] Validate required sample rate
-- [ ] Validate required bit depth
-- [ ] Validate required channel count
-- [ ] Validate maximum permitted peak
-- [ ] Validate maximum permitted DC offset
-- [ ] Validate permitted left/right imbalance
-- [ ] Validate minimum and maximum duration
-- [ ] Produce pass, warning, and error results
-- [ ] Allow users to create custom profiles
+- Correlation, level difference, delay, polarity, and dual-mono checks
+- Mono-cancellation and compatibility analysis
+- Mid/side measurements
+- Frequency-dependent correlation and stereo-width estimates
+- Essential stereo-relationship and spatial-cue graphs
+- Event detection with explicit interpretation limits
 
-## Version 0.9.0 — Reports and Batch Processing
+The tool will visualize measurable stereo cues without claiming exact physical source locations or definitive perceived width.
 
-- [ ] Export measurements as JSON
-- [ ] Export measurements as CSV
-- [ ] Generate an HTML report
-- [ ] Save analysis settings with reports
-- [ ] Analyze every supported file in a folder
-- [ ] Produce a folder-level quality-control summary
-- [ ] Compare two audio files
-- [ ] Sort batch results by pass, warning, and error
+**Differentiation focus:** Combine frequency-dependent correlation, mono cancellation, mid/side evidence, event timestamps, and explicit interpretation limits.
 
-## Version 1.0.0 — Tested Release
+## 0.6.0 — Expanded Stereo WAV Support
 
-- [ ] Add automated unit tests
-- [ ] Test known-frequency signals
-- [ ] Test known-amplitude signals
-- [ ] Test silent signals
-- [ ] Test clipped signals
-- [ ] Test dual-mono signals
-- [ ] Test polarity-inverted signals
-- [ ] Test every supported bit depth
-- [ ] Add automated testing with GitHub Actions
-- [ ] Complete project documentation
-- [ ] Add example reports and screenshots
-- [ ] Add a changelog
-- [ ] Add a license
-- [ ] Package the program as an installable command-line tool
-- [ ] Publish a versioned GitHub release
+Make the stereo measurements work across realistic WAV encodings and large files.
+
+- 8-, 16-, 24-, and 32-bit integer PCM
+- 32-bit floating-point WAV and extensible WAV headers
+- One normalized internal sample representation
+- Correct mono and multichannel identification without non-stereo analysis
+- Metadata-supported layout recognition without guessing
+- Chunked large-file processing and cross-format validation
+- Optional investigation of stereo AIFF and FLAC
+
+**Differentiation focus:** Demonstrate measurement parity across encodings and identify non-stereo layouts honestly without guessing or silently analyzing the wrong channels.
+
+## 0.7.0 — Visualization and Interactive Exploration
+
+Connect the measurements through an accessible visual investigation workspace.
+
+- Waveforms with level, clipping, silence, and event overlays
+- Refined frequency and stereo-relationship displays
+- Linked time selections across waveform, spectrum, and stereo views
+- Chronological analysis-event navigator
+- Basic visual evidence panels
+- Comparison views, dashboards, and accessible exports
+- Optional playback-synchronized and animated displays
+
+**Differentiation focus:** Create a linked investigation workspace where one selected event updates every relevant measurement and visualization.
+
+## 0.8.0 — Quality-Control Profiles
+
+Apply explicit technical requirements and explain every result.
+
+- Versioned JSON quality-control profiles
+- Format, level, spectral, and stereo rules
+- Rule applicability by channel, time, frequency, signal level, and duration
+- Pass, information, warning, error, not-applicable, and insufficient-evidence states
+- Confidence and limitation indicators
+- “Why was this flagged?” evidence cards
+- Profile validation, overrides, acknowledgments, and automation-friendly exit codes
+
+The tool will report which implemented rules passed; it will not claim unsupported official certification.
+
+**Differentiation focus:** Explain every finding with evidence, threshold, method, confidence, limitations, and applicability conditions.
+
+## 0.9.0 — Reports and Batch Processing
+
+Support practical stereo-delivery inspection across files and sessions.
+
+- Terminal, JSON, CSV, HTML, and potential PDF reports
+- Folder, recursive, and pattern-based batch input
+- Progress, cancellation, recovery, and resumable analysis
+- Batch summaries and folder/session consistency checks
+- Two-file comparison
+- Reproducible analysis packages
+- Checksums, safe caching, versioned schemas, and privacy controls
+
+**Differentiation focus:** Produce resumable session-level QC and self-contained, privacy-aware packages that another person can inspect and reproduce.
+
+## 1.0.0 — Trusted, Tested, and Installable Release
+
+Deliver a stable release that another person can install, understand, and verify.
+
+- Installable `audio-report` command and modular package structure
+- Stable CLI, schemas, exit codes, and supported-feature definitions
+- Unit, integration, regression, and end-to-end tests
+- Controlled test-signal laboratory with documented tolerances
+- Automated GitHub checks and tested platform support
+- Safe handling of malformed and untrusted input
+- Performance benchmarks and complete documentation
+- Accessible examples, reports, and visualizations
+- Semantic versioning, changelog, license, release candidate, and GitHub release
+
+Version 1.0.0 does not require every optional experiment to be complete. It means the declared core features are validated, documented, and stable.
+
+**Differentiation focus:** Make trust auditable through controlled test signals, numerical tolerances, regression tests, stable schemas, and explicit boundaries.
 
 ## Future Research
 
-Potential features after version 1.0:
+Possible work after version 1.0.0 includes:
 
-- [ ] Integrated loudness
-- [ ] Momentary loudness
-- [ ] Short-term loudness
-- [ ] Loudness range
-- [ ] True-peak measurement
-- [ ] BWF metadata inspection
-- [ ] Interactive graphical interface
-- [ ] Drag-and-drop file selection
-- [ ] Real-time input analysis
-- [ ] Multichannel and immersive-audio validation
+- True peak and standardized loudness measurements
+- Advanced level, noise, transient, and dynamics analysis
+- Broadcast Wave Format metadata inspection
+- Additional interfaces and real-time input
+- A separate multichannel and immersive-audio delivery validator
 
-## Measurement Terminology
+## Project Boundaries
 
-- The current FFT graph represents the frequency spectrum of the selected audio file.
-- It should not be described as a system frequency response unless a known test signal and measurement process are used.
-- Digital level measurements in dBFS should not be described as acoustic SPL without a calibrated measurement chain.
+- The project remains focused on stereo analysis.
+- Mono and multichannel files may be identified and described but will not receive stereo analysis.
+- A file spectrum is not automatically a system frequency response.
+- Digital dBFS measurements are not acoustic SPL without a calibrated measurement chain.
+- Heuristic findings will include confidence and limitations rather than being presented as facts.
+- Unsupported formats and inconclusive measurements will produce clear explanations rather than unreliable results.
