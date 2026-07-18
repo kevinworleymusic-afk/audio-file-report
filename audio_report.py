@@ -1,3 +1,5 @@
+#1. Imports
+
 import wave
 from pathlib import Path
 import sys
@@ -6,123 +8,294 @@ import matplotlib.pyplot as plt
 
 # audio_path = Path("test_audio.wav")
 
-if len(sys.argv) < 2:
-    print("Usage: python3 audio_report.py <audio-file.wav>")
-    sys.exit(1)
+#2. Function definitions
 
-audio_path = Path(sys.argv[1])
+import sys
+import wave
+from pathlib import Path
 
-with wave.open(str(audio_path), "rb") as audio_file:
-    channels = audio_file.getnchannels()
-    sample_rate = audio_file.getframerate()
-    sample_width = audio_file.getsampwidth()
-    frame_count = audio_file.getnframes()
-    audio_data = audio_file.readframes(frame_count)
+import matplotlib.pyplot as plt
+import numpy as np
 
-bit_depth = sample_width * 8
-duration = frame_count / sample_rate
 
-print("AUDIO FILE REPORT")
-print("-----------------")
-print(f"File: {audio_path.name}")
-print(f"Channels: {channels}")
-print(f"Sample rate: {sample_rate} Hz")
-print(f"Bit depth: {bit_depth}-bit")
-print(f"Frames: {frame_count}")
-print(f"Duration: {duration:.2f} seconds")
+# 1. Get the WAV filename supplied in Terminal.
+def get_audio_path():
+    if len(sys.argv) < 2:
+        print(
+            "Usage: python3 audio_report.py "
+            "<audio-file.wav>"
+        )
+        sys.exit(1)
 
-if sample_width != 2:
-    print("Spectrum analysis currently only supports 16-bit audio files.")
-    sys.exit(1) 
-    
-if channels < 2:
-    print("A stereo WAv file is required for left/right comparison.")
-    sys.exit(1)
+    return Path(sys.argv[1])
 
-samples = np.frombuffer(audio_data, dtype="<i2")
-samples = samples.reshape(-1, channels)
 
-left_channel = samples[:, 0].astype(float)
-right_channel = samples[:, 1].astype(float)
+# 2. Read the WAV header and raw audio data.
+def read_wav_file(audio_path):
+    with wave.open(str(audio_path), "rb") as audio_file:
+        channels = audio_file.getnchannels()
+        sample_rate = audio_file.getframerate()
+        sample_width = audio_file.getsampwidth()
+        frame_count = audio_file.getnframes()
+        audio_data = audio_file.readframes(frame_count)
 
-window = np.hanning(frame_count)
+    return (
+        channels,
+        sample_rate,
+        sample_width,
+        frame_count,
+        audio_data,
+    )
 
-left_fft = np.fft.rfft(left_channel * window)
-right_fft = np.fft.rfft(right_channel * window)
 
-frequencies = np.fft.rfftfreq(
+# 3. Confirm that the file is currently supported.
+def validate_audio_format(sample_width, channels):
+    if sample_width != 2:
+        print(
+            "Spectrum analysis currently only supports "
+            "16-bit audio files."
+        )
+        sys.exit(1)
+
+    if channels != 2:
+        print(
+            "A stereo WAV file is required "
+            "for left/right comparison."
+        )
+        sys.exit(1)
+
+
+# 4. Calculate duration in seconds.
+def calculate_duration(frame_count, sample_rate):
+    return frame_count / sample_rate
+
+
+# 5. Print the technical file report.
+def print_report(
+    audio_path,
+    channels,
+    sample_rate,
+    bit_depth,
     frame_count,
-    d=1.0 / sample_rate,
-)
+    duration,
+):
+    print("AUDIO FILE REPORT")
+    print("-----------------")
+    print(f"File: {audio_path.name}")
+    print(f"Channels: {channels}")
+    print(f"Sample rate: {sample_rate} Hz")
+    print(f"Bit depth: {bit_depth}-bit")
+    print(f"Frames: {frame_count}")
+    print(f"Duration: {duration:.2f} seconds")
 
-left_magnitude = np.abs(left_fft)
-right_magnitude = np.abs(right_fft)
 
-reference = max(
-    np.max(left_magnitude), 
-    np.max(right_magnitude)
-)
+# 6. Decode and separate the stereo samples.
+def separate_stereo_channels(audio_data, channels):
+    samples = np.frombuffer(
+        audio_data,
+        dtype="<i2",
+    )
 
-left_db = 20 * np.log10(
-    np.maximum(left_magnitude / reference, 1e-12)
-)
+    samples = samples.reshape(-1, channels)
 
-right_db = 20 * np.log10(
-    np.maximum(right_magnitude / reference, 1e-12)
-)
+    left_channel = samples[:, 0].astype(float)
+    right_channel = samples[:, 1].astype(float)
 
-frequency_range = (
-    (frequencies >= 20) 
-    & (frequencies <= 20000)
-)
+    return left_channel, right_channel
 
-plt.figure(figsize=(10, 6))
 
-plt.semilogx(
-    frequencies[frequency_range],
-    left_db[frequency_range],
-    label="Left Channel",
-)
+# 7. Calculate the spectrum of one channel.
+def calculate_spectrum(channel_data, sample_rate):
+    frame_count = len(channel_data)
 
-plt.semilogx(
-    frequencies[frequency_range],
-    right_db[frequency_range],
-    label="Right Channel",
-)
-plt.title("Left and Right Channel Frequency Spectrum")
-plt.xlabel("Frequency (Hz)")
-plt.ylabel("Relative magnitude (dB)")
-plt.xlim(20, 20000)
-plt.ylim(-120, 5)
-frequency_ticks = [
-    20,
-    50,
-    100,
-    200,
-    500,
-    1_000,
-    2_000,
-    5_000,
-    10_000,
-    20_000,
-]
+    window = np.hanning(frame_count)
+    windowed_audio = channel_data * window
 
-frequency_labels = [
-    "20",
-    "50",
-    "100",
-    "200",
-    "500",
-    "1k",
-    "2k",
-    "5k",
-    "10k",
-    "20k",
-]
+    channel_fft = np.fft.rfft(windowed_audio)
 
-plt.xticks(frequency_ticks, frequency_labels)
+    frequencies = np.fft.rfftfreq(
+        frame_count,
+        d=1.0 / sample_rate,
+    )
 
-plt.grid(which="both", linestyle="--", alpha=0.4)
-plt.legend()
-plt.tight_layout()
-plt.show()
+    magnitude = np.abs(channel_fft)
+
+    return frequencies, magnitude
+
+
+# 8. Normalize both spectra and convert them to dB.
+def convert_spectra_to_db(
+    left_magnitude,
+    right_magnitude,
+):
+    reference = max(
+        np.max(left_magnitude),
+        np.max(right_magnitude),
+    )
+
+    left_db = 20 * np.log10(
+        np.maximum(
+            left_magnitude / reference,
+            1e-12,
+        )
+    )
+
+    right_db = 20 * np.log10(
+        np.maximum(
+            right_magnitude / reference,
+            1e-12,
+        )
+    )
+
+    return left_db, right_db
+
+
+# 9. Plot the left and right spectra.
+def plot_stereo_spectrum(
+    frequencies,
+    left_db,
+    right_db,
+):
+    frequency_range = (
+        (frequencies >= 20)
+        & (frequencies <= 20_000)
+    )
+
+    plt.figure(figsize=(10, 6))
+
+    plt.semilogx(
+        frequencies[frequency_range],
+        left_db[frequency_range],
+        label="Left Channel",
+    )
+
+    plt.semilogx(
+        frequencies[frequency_range],
+        right_db[frequency_range],
+        label="Right Channel",
+    )
+
+    plt.title(
+        "Left and Right Channel Frequency Spectrum"
+    )
+    plt.xlabel("Frequency (Hz)")
+    plt.ylabel("Relative magnitude (dB)")
+
+    plt.xlim(20, 20_000)
+    plt.ylim(-120, 5)
+
+    frequency_ticks = [
+        20,
+        50,
+        100,
+        200,
+        500,
+        1_000,
+        2_000,
+        5_000,
+        10_000,
+        20_000,
+    ]
+
+    frequency_labels = [
+        "20",
+        "50",
+        "100",
+        "200",
+        "500",
+        "1k",
+        "2k",
+        "5k",
+        "10k",
+        "20k",
+    ]
+
+    plt.xticks(
+        frequency_ticks,
+        frequency_labels,
+    )
+
+    plt.grid(
+        which="both",
+        linestyle="--",
+        alpha=0.4,
+    )
+
+    plt.legend()
+    plt.tight_layout()
+    plt.show()
+
+
+# 10. Coordinate the entire program.
+def main():
+    audio_path = get_audio_path()
+
+    (
+        channels,
+        sample_rate,
+        sample_width,
+        frame_count,
+        audio_data,
+    ) = read_wav_file(audio_path)
+
+    bit_depth = sample_width * 8
+
+    duration = calculate_duration(
+        frame_count,
+        sample_rate,
+    )
+
+    print_report(
+        audio_path,
+        channels,
+        sample_rate,
+        bit_depth,
+        frame_count,
+        duration,
+    )
+
+    validate_audio_format(
+        sample_width,
+        channels,
+    )
+
+    (
+        left_channel,
+        right_channel,
+    ) = separate_stereo_channels(
+        audio_data,
+        channels,
+    )
+
+    (
+        frequencies,
+        left_magnitude,
+    ) = calculate_spectrum(
+        left_channel,
+        sample_rate,
+    )
+
+    (
+        _,
+        right_magnitude,
+    ) = calculate_spectrum(
+        right_channel,
+        sample_rate,
+    )
+
+    (
+        left_db,
+        right_db,
+    ) = convert_spectra_to_db(
+        left_magnitude,
+        right_magnitude,
+    )
+
+    plot_stereo_spectrum(
+        frequencies,
+        left_db,
+        right_db,
+    )
+
+if __name__ == "__main__":
+    main()
