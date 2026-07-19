@@ -76,6 +76,7 @@ def parse_arguments():
 def create_default_plot_filename(audio_path):
         return f"{audio_path.stem}_stereo_spectrum.png"
 
+
 # 2. Read the WAV header and raw audio data.
 def read_wav_file(audio_path):
     with wave.open(str(audio_path), "rb") as audio_file:
@@ -201,6 +202,8 @@ def plot_stereo_spectrum(
     frequencies,
     left_db,
     right_db,
+    plot_mode,
+    plot_path=None
 ):
     frequency_range = (
         (frequencies >= 20)
@@ -269,8 +272,20 @@ def plot_stereo_spectrum(
 
     plt.legend()
     plt.tight_layout()
-    plt.show()
+    
+    if plot_mode in ("save", "both"):
+        plt.savefig(
+            plot_path,
+            dpi=150,
+            bbox_inches="tight"
+        )
 
+        print(f"Plot saved to: {plot_path.resolve()}")
+
+        if plot_mode in ("show", "both"):
+            plt.show()
+
+            plt.close()
 
 # 10. Coordinate the entire program.
 def main():
@@ -337,16 +352,34 @@ def main():
         left_magnitude,
         right_magnitude,
     )
+    plot_path = None
 
-    plot_stereo_spectrum(
-        frequencies,
-        left_db,
-        right_db,
-    )
+    # Handle plot saving/showing options
+    if args.plot in ("save", "both"):
+        # Determine filename
+        if args.plot_file is None:
+            plot_filename = Path(create_default_plot_filename(audio_path))
+        else:
+            plot_filename = Path(args.plot_file)
 
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\nProgram interrupted by user. Exiting...")
+        # Determine output directory (default to current directory)
+        output_dir = args.output_dir or Path('.')
+        output_dir.mkdir(parents=True, exist_ok=True)
+
+        plot_path = output_dir / plot_filename
+
+    if args.plot != "none":
+        plot_stereo_spectrum(
+            frequencies,
+            left_db,
+            right_db,
+            args.plot,
+            plot_path,
+        )
+       
+    if __name__ == "__main__":
+        try:
+            main()
+        except KeyboardInterrupt:
+            print("\nProgram interrupted by user. Exiting...")
 
