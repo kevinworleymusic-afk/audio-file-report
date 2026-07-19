@@ -4,17 +4,18 @@ import numpy as np
 
 
 def validate_audio_format(sample_width: int, channels: int) -> None:
+    logger = __import__("logging").getLogger(__name__)
     if sample_width != 2:
+        logger.debug("Unsupported sample width for analysis: %s", sample_width)
         print(
-            "Spectrum analysis currently only supports "
-            "16-bit audio files."
+            "Error: Spectrum analysis currently only supports 16-bit audio files."
         )
         sys.exit(1)
 
     if channels != 2:
+        logger.debug("Unsupported channel count for analysis: %s", channels)
         print(
-            "A stereo WAV file is required "
-            "for left/right comparison."
+            "Error: A stereo WAV file is required for left/right comparison."
         )
         sys.exit(1)
 

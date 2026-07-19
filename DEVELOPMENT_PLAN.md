@@ -61,7 +61,7 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Add `--plot save`
 - [x] Add `--plot both`
 - [x] Add `--plot none`
- - [x] Default plot behavior set to `save` (changed from `show`)
+- [x] Default plot behavior set to `save` (changed from `show`)
 - [x] Add `--plot-file` to select the output filename
 - [x] Add `--output-dir` to select an output folder
 - [x] Generate a readable default PNG filename
@@ -77,32 +77,33 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 
 ### File Validation
 
- - [x] Confirm that the supplied path exists
- - [x] Confirm that the path points to a file rather than a folder
- - [x] Detect permission errors (permission-denied when opening file)
- - [x] Check for zero-length files and flag them
- - [x] Detect WAV files containing zero frames
- - [x] Confirm that the file contains readable WAV data
- - [x] Validate WAV structure rather than trusting only the extension
- - [x] Detect unreadable or corrupted WAV headers
- - [x] Explain unsupported encoding types
- - [x] Explain unsupported bit depths
- - [x] Explain unsupported channel counts
- - [x] Distinguish missing-file, permission, and empty-file errors (with specific exit codes)
+- [x] Confirm that the supplied path exists
+- [x] Confirm that the path points to a file rather than a folder
+- [x] Detect permission errors (permission-denied when opening file)
+- [x] Check for zero-length files and flag them
+- [x] Detect WAV files containing zero frames
+- [x] Confirm that the file contains readable WAV data
+- [x] Validate WAV structure rather than trusting only the extension
+- [x] Detect unreadable or corrupted WAV headers
+- [x] Explain unsupported encoding types
+- [x] Explain unsupported bit depths
+- [x] Explain unsupported channel counts
+- [x] Distinguish missing-file, permission, and empty-file errors (with specific exit codes)
 
 ### Diagnostics
 
-- [ ] Show concise errors by default
+- [x] Show concise errors by default
 - [x] Add `--debug` (prints validation diagnostics when enabled)
-- [ ] Show full tracebacks only in debug mode
-- [ ] Add `--log-file`
-- [ ] Include the program version in debug logs
-- [ ] Include Python and dependency versions in debug logs
-- [ ] Include the operating system in debug logs
+- [x] Show full tracebacks only in debug mode
+- [x] Add `--log-file` (writes DEBUG and tracebacks to file)
+- [x] Include the program version in debug logs
+- [x] Include Python and dependency versions in debug logs
+- [x] Include the operating system in debug logs
 - [x] Include the resolved input path in debug logs (validation prints when missing)
-- [ ] Include active command-line options in debug logs
-- [ ] Provide actionable suggestions for correctable errors
+- [x] Include active command-line options in debug logs
+- [x] Provide actionable suggestions for correctable errors
 - [x] Use clear operating-system exit codes (distinct codes for missing/permission/empty)
+
 
 ### Improved Metadata
 
@@ -134,6 +135,11 @@ Updates made in this workspace (refactor & docs):
 - [x] Update README installation instructions and usage examples (basic CLI and flags documented)
 - [x] Split code into modules: `cli.py`, `fileio.py`, `analysis.py`, `plotting.py` and a thin `audio_report.py` entrypoint
 - [x] Documented main CLI behaviors: `--plot`, `--plot-file`, `--output-dir`, `--overwrite`, `--dpi`, `--dpi-choice`, `--debug`, `--show`, `--no-prompt`
+ - [x] Added `--log-file` support and logging configuration in `audio_report.py`
+ - [x] Cleaned `fileio.py` to use module-level `logger`, concise stderr messages, and `logger.exception()` for diagnostics
+ - [x] Added README snippet documenting logging behavior and examples for `--log-file` and `--debug`
+ - [x] Logged program/version, Python, OS, and dependency versions to `--log-file` (startup header)
+ - [x] Logged active command-line options and resolved paths in debug logs
 
 ## Version 0.3.0 — Level and Dynamics Measurements
 

@@ -53,6 +53,22 @@ python3 audio_report.py test_audio.wav --plot show --no-prompt
 - `--show` — request an interactive GUI display (overrides default `save`)
 - `--no-prompt` — when no display is detected, do not prompt; save automatically
 
+## Logging and concise errors
+
+By default the program prints short, user-friendly error messages to the console and writes full diagnostics (DEBUG messages and stack traces) to a log file when requested.
+
+Examples:
+
+```bash
+# write detailed logs to debug.log, console remains concise
+python3 audio_report.py test_audio.wav --log-file debug.log
+
+# verbose console output + file logging
+python3 audio_report.py test_audio.wav --log-file debug.log --debug
+```
+
+When reporting an issue, include the `debug.log` file (if you used `--log-file`) so developers can see full tracebacks and internal diagnostics.
+
 ## Notes
 
 - The tool currently supports 16-bit stereo PCM WAV files for spectrum analysis.
