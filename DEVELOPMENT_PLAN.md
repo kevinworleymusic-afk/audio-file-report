@@ -45,7 +45,7 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Accept paths containing spaces
 - [x] Expand `~` in file paths
 - [x] Handle Unicode characters in filenames
-- [ ] Handle keyboard interruption with Control-C cleanly
+- [x] Handle keyboard interruption with Control-C cleanly
 
 ### Display Modes
 
