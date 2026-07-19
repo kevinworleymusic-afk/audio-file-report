@@ -1,25 +1,16 @@
-#1. Imports
-
-from os import path
-import os
-import matplotlib as mpl
-
-# Exit codes for validation failures
-EXIT_NOT_FOUND = 2
-EXIT_PERMISSION = 3
-EXIT_EMPTY = 4
-EXIT_NOT_FILE = 5
-EXIT_INVALID_WAV = 6
-import wave
 from pathlib import Path
-import sys
-import numpy as np
-import matplotlib.pyplot as plt
-import gc
-import argparse
-from pathlib import Path
-# audio_path = Path("test_audio.wav")
-__version__ = "0.1.0"
+
+from cli import parse_arguments, display_available, get_final_plot_path
+from io import validate_input_path, validate_wav_file, read_wav_file
+from analysis import (
+    validate_audio_format,
+    calculate_duration,
+    print_report,
+    separate_stereo_channels,
+    calculate_spectrum,
+    convert_spectra_to_db,
+)
+from plotting import plot_stereo_spectrum
 
 # 1. Get the WAV filename supplied in Terminal.
 def parse_arguments():
@@ -36,7 +27,7 @@ def parse_arguments():
     parser.add_argument(
         "--version",
         action="version",
-        version="Audio File Report (__version__)")
+        version=f"Audio File Report {__version__}")
     
     display_group = parser.add_mutually_exclusive_group()
 
@@ -133,6 +124,66 @@ def parse_arguments():
 
     return args
 
+
+def create_default_plot_filename(audio_path: Path) -> str:
+    """Return a readable default filename for saved plots."""
+    return f"{audio_path.stem}_stereo_spectrum.png"
+
+
+def display_available() -> bool:
+    """Return True if a GUI display appears available for Matplotlib.
+
+    Conservative: checks current Matplotlib backend and DISPLAY/WAYLAND env on Linux.
+    """
+    backend = mpl.get_backend().lower()
+    non_gui = {"agg", "pdf", "svg", "ps", "cairo"}
+
+    if any(b in backend for b in non_gui):
+        return False
+
+    if sys.platform.startswith("linux"):
+        if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+            return False
+
+    return True
+
+
+def get_final_plot_path(audio_path: Path, args) -> Optional[Path]:
+    """Determine the final plot path, handling output-dir, plot-file, and overwrite.
+
+    Returns a Path or None when not saving.
+    """
+    if args.plot not in ("save", "both"):
+        return None
+
+    if args.plot_file is None:
+        plot_filename = Path(create_default_plot_filename(audio_path))
+    else:
+        plot_filename = Path(args.plot_file)
+
+    output_dir = args.output_dir or Path('.')
+    output_dir.mkdir(parents=True, exist_ok=True)
+
+    plot_path = output_dir / plot_filename
+
+    if not args.overwrite:
+        final_plot_path = plot_path
+        counter = 1
+        while final_plot_path.exists():
+            stem = plot_path.stem
+            suffix = plot_path.suffix
+            final_plot_path = plot_path.with_name(f"{stem}_{counter}{suffix}")
+            counter += 1
+
+        if final_plot_path != plot_path:
+            print(f"Target exists; saving as: {final_plot_path.resolve()}")
+
+        plot_path = final_plot_path
+
+    return plot_path
+
+    return args
+
 def create_default_plot_filename(audio_path):
         return f"{audio_path.stem}_stereo_spectrum.png"
 
@@ -172,8 +223,99 @@ def validate_input_path(audio_path: Path, debug: bool = False) -> None:
         sys.exit(EXIT_EMPTY)
 
 
+def validate_wav_file(audio_path: Path, debug: bool = False) -> None:
+    """Validate WAV header and basic structure: readable, non-empty frames."""
+    try:
+        with wave.open(str(audio_path), "rb") as wf:
+            channels = wf.getnchannels()
+            sampwidth = wf.getsampwidth()
+            nframes = wf.getnframes()
+            comptype = wf.getcomptype()
+            compname = wf.getcompname()
+
+            if debug:
+                print(f"DEBUG: WAV channels={channels}, sampwidth={sampwidth}, frames={nframes}")
+
+            if nframes == 0:
+                print(f"Error: WAV file '{audio_path}' contains zero frames.")
+                sys.exit(EXIT_INVALID_WAV)
+
+            # try reading a small amount of data to ensure frames are readable
+            try:
+                wf.rewind()
+                sample = wf.readframes(1)
+            except Exception as e:
+                print(f"Error: could not read frames from WAV file: {e}")
+                if debug:
+                    import traceback; traceback.print_exc()
+                sys.exit(EXIT_INVALID_WAV)
+
+            # basic sanity check for sample width
+            if sampwidth not in (1, 2, 3, 4):
+                print(f"Error: unsupported sample width ({sampwidth} bytes) in WAV file.")
+                sys.exit(EXIT_INVALID_WAV)
+
+            # Check compression type (expect PCM/uncompressed)
+            if comptype != "NONE":
+                print(f"Error: unsupported WAV compression type: {comptype} ({compname})")
+                sys.exit(EXIT_INVALID_WAV)
+
+            # Additional check for 32-bit files: distinguish float vs int
+            if sampwidth == 4:
+                try:
+                    # read a short sample window
+                    wf.rewind()
+                    raw = wf.readframes(min(1024, nframes))
+                    import numpy as _np
+
+                    if len(raw) >= 4:
+                        # Try interpret as float32
+                        try:
+                            f = _np.frombuffer(raw, dtype='<f4')
+                            maxf = float(_np.max(_np.abs(f))) if f.size else 0.0
+                        except Exception:
+                            maxf = float('inf')
+
+                        try:
+                            i = _np.frombuffer(raw, dtype='<i4')
+                            maxi = int(_np.max(_np.abs(i))) if i.size else 0
+                        except Exception:
+                            maxi = 0
+
+                        if maxf <= 1.5:
+                            if debug:
+                                print("DEBUG: detected 32-bit float WAV (values in -1..1).")
+                        elif maxi > 0:
+                            if debug:
+                                print("DEBUG: detected 32-bit integer WAV.")
+                        else:
+                            if debug:
+                                print("DEBUG: could not determine 32-bit WAV subtype; assuming integer.")
+                except Exception:
+                    if debug:
+                        import traceback; traceback.print_exc()
+
+    except wave.Error as e:
+        print(f"Error: invalid WAV file or corrupted header: {e}")
+        if debug:
+            import traceback; traceback.print_exc()
+        sys.exit(EXIT_INVALID_WAV)
+    except EOFError:
+        print("Error: unexpected end of file while reading WAV header.")
+        sys.exit(EXIT_INVALID_WAV)
+    except Exception as e:
+        print(f"Error: cannot read WAV file: {e}")
+        if debug:
+            import traceback; traceback.print_exc()
+        sys.exit(EXIT_INVALID_WAV)
+
+
 # 2. Read the WAV header and raw audio data.
-def read_wav_file(audio_path):
+def read_wav_file(audio_path: Path) -> Tuple[int, int, int, int, bytes]:
+    """Read WAV header and raw audio frames.
+
+    Returns: (channels, sample_rate, sample_width, frame_count, audio_data)
+    """
     with wave.open(str(audio_path), "rb") as audio_file:
         channels = audio_file.getnchannels()
         sample_rate = audio_file.getframerate()
@@ -191,7 +333,7 @@ def read_wav_file(audio_path):
 
 
 # 3. Confirm that the file is currently supported.
-def validate_audio_format(sample_width, channels):
+def validate_audio_format(sample_width: int, channels: int) -> None:
     if sample_width != 2:
         print(
             "Spectrum analysis currently only supports "
@@ -208,19 +350,20 @@ def validate_audio_format(sample_width, channels):
 
 
 # 4. Calculate duration in seconds.
-def calculate_duration(frame_count, sample_rate):
+def calculate_duration(frame_count: int, sample_rate: int) -> float:
+    """Return duration in seconds."""
     return frame_count / sample_rate
 
 
 # 5. Print the technical file report.
 def print_report(
-    audio_path,
-    channels,
-    sample_rate,
-    bit_depth,
-    frame_count,
-    duration,
-):
+    audio_path: Path,
+    channels: int,
+    sample_rate: int,
+    bit_depth: int,
+    frame_count: int,
+    duration: float,
+) -> None:
     print("AUDIO FILE REPORT")
     print("-----------------")
     print(f"File: {audio_path.name}")
@@ -232,7 +375,11 @@ def print_report(
 
 
 # 6. Decode and separate the stereo samples.
-def separate_stereo_channels(audio_data, channels):
+def separate_stereo_channels(audio_data: bytes, channels: int):
+    """Decode interleaved PCM bytes to left/right float arrays.
+
+    Assumes little-endian 16-bit samples for current implementation.
+    """
     samples = np.frombuffer(
         audio_data,
         dtype="<i2",
@@ -247,7 +394,8 @@ def separate_stereo_channels(audio_data, channels):
 
 
 # 7. Calculate the spectrum of one channel.
-def calculate_spectrum(channel_data, sample_rate):
+def calculate_spectrum(channel_data: np.ndarray, sample_rate: int):
+    """Compute FFT and return frequencies and magnitude spectrum."""
     frame_count = len(channel_data)
 
     window = np.hanning(frame_count)
@@ -267,9 +415,9 @@ def calculate_spectrum(channel_data, sample_rate):
 
 # 8. Normalize both spectra and convert them to dB.
 def convert_spectra_to_db(
-    left_magnitude,
-    right_magnitude,
-):
+    left_magnitude: np.ndarray,
+    right_magnitude: np.ndarray,
+) -> Tuple[np.ndarray, np.ndarray]:
     reference = max(
         np.max(left_magnitude),
         np.max(right_magnitude),
@@ -294,13 +442,13 @@ def convert_spectra_to_db(
 
 # 9. Plot the left and right spectra.
 def plot_stereo_spectrum(
-    frequencies,
-    left_db,
-    right_db,
-    plot_mode,
-    plot_path,
-    dpi=300,
-):
+    frequencies: np.ndarray,
+    left_db: np.ndarray,
+    right_db: np.ndarray,
+    plot_mode: str,
+    plot_path: Optional[Path],
+    dpi: int = 300,
+) -> None:
     frequency_range = (
         (frequencies >= 20)
         & (frequencies <= 20_000)
@@ -397,27 +545,12 @@ def main():
     args = parse_arguments()
     # Validate input path early
     validate_input_path(args.audio_file, debug=getattr(args, "debug", False))
+    # Validate WAV structure and readable content
+    validate_wav_file(args.audio_file, debug=getattr(args, "debug", False))
     # Detect graphical display availability and adjust backend/plot mode.
-    def _display_available():
-        backend = mpl.get_backend().lower()
-        non_gui = {"agg", "pdf", "svg", "ps", "cairo"}
-
-        # If Matplotlib is already using a non-GUI backend, no display.
-        if any(b in backend for b in non_gui):
-            return False
-
-        # On Linux, require DISPLAY or WAYLAND_DISPLAY to be set.
-        if sys.platform.startswith("linux"):
-            if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
-                return False
-
-        # Otherwise assume a display is available (covers macOS, Windows typical cases).
-        return True
-
-    if not _display_available():
+    if not display_available():
         try:
-            import matplotlib.pyplot as _plt
-            _plt.switch_backend("Agg")
+            plt.switch_backend("Agg")
         except Exception:
             pass
 
@@ -503,36 +636,7 @@ def main():
         left_magnitude,
         right_magnitude,
     )
-    plot_path = None
-
-    # Handle plot saving/showing options
-    if args.plot in ("save", "both"):
-        # Determine filename
-        if args.plot_file is None:
-            plot_filename = Path(create_default_plot_filename(audio_path))
-        else:
-            plot_filename = Path(args.plot_file)
-
-        # Determine output directory (default to current directory)
-        output_dir = args.output_dir or Path('.')
-        output_dir.mkdir(parents=True, exist_ok=True)
-
-        plot_path = output_dir / plot_filename
-
-        # Prevent accidental overwrites unless user explicitly allowed it.
-        if not args.overwrite:
-            final_plot_path = plot_path
-            counter = 1
-            while final_plot_path.exists():
-                stem = plot_path.stem
-                suffix = plot_path.suffix
-                final_plot_path = plot_path.with_name(f"{stem}_{counter}{suffix}")
-                counter += 1
-
-            if final_plot_path != plot_path:
-                print(f"Target exists; saving as: {final_plot_path.resolve()}")
-
-            plot_path = final_plot_path
+    plot_path = get_final_plot_path(audio_path, args)
 
     if args.plot != "none":
         plot_stereo_spectrum(

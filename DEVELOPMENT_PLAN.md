@@ -61,7 +61,7 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Add `--plot save`
 - [x] Add `--plot both`
 - [x] Add `--plot none`
-- [x] Keep `show` as the default plot behavior
+ - [x] Default plot behavior set to `save` (changed from `show`)
 - [x] Add `--plot-file` to select the output filename
 - [x] Add `--output-dir` to select an output folder
 - [x] Generate a readable default PNG filename
@@ -72,22 +72,23 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Save graphs at a useful resolution, set choice between 300 DPI, 200 DPI, and 150 DPI.
 - [x] Close Matplotlib cleanly
 - [x] Detect when a graphical display is unavailable
-- [x] Added an interactive prompt when no display is available.
+ - [x] Added an interactive prompt when no display is available.
+ - [x] Add `--no-prompt` to skip the prompt and proceed to save
 
 ### File Validation
 
-- [x] Confirm that the supplied path exists
-- [x] Confirm that the path points to a file rather than a folder
-- [x] Detect permission errors (permission-denied when opening file)
-- [x] Check for zero-length files and flag them
-- [ ] Detect WAV files containing zero frames
-- [ ] Confirm that the file contains readable WAV data
-- [ ] Validate WAV structure rather than trusting only the extension
-- [ ] Detect unreadable or corrupted WAV headers
-- [ ] Explain unsupported encoding types
-- [ ] Explain unsupported bit depths
-- [ ] Explain unsupported channel counts
-- [x] Distinguish missing-file, permission, and empty-file errors (with specific exit codes)
+ - [x] Confirm that the supplied path exists
+ - [x] Confirm that the path points to a file rather than a folder
+ - [x] Detect permission errors (permission-denied when opening file)
+ - [x] Check for zero-length files and flag them
+ - [x] Detect WAV files containing zero frames
+ - [x] Confirm that the file contains readable WAV data
+ - [x] Validate WAV structure rather than trusting only the extension
+ - [x] Detect unreadable or corrupted WAV headers
+ - [x] Explain unsupported encoding types
+ - [x] Explain unsupported bit depths
+ - [x] Explain unsupported channel counts
+ - [x] Distinguish missing-file, permission, and empty-file errors (with specific exit codes)
 
 ### Diagnostics
 
