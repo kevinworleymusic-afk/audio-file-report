@@ -129,6 +129,12 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [ ] Add normal, brief, verbose, and debug examples
 - [ ] Update `__version__` to `0.2.0` only when the release is complete
 
+Updates made in this workspace (refactor & docs):
+
+- [x] Update README installation instructions and usage examples (basic CLI and flags documented)
+- [x] Split code into modules: `cli.py`, `fileio.py`, `analysis.py`, `plotting.py` and a thin `audio_report.py` entrypoint
+- [x] Documented main CLI behaviors: `--plot`, `--plot-file`, `--output-dir`, `--overwrite`, `--dpi`, `--dpi-choice`, `--debug`, `--show`, `--no-prompt`
+
 ## Version 0.3.0 — Level and Dynamics Measurements
 
 ### Differentiation Goals
