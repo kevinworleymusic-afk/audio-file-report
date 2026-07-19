@@ -11,7 +11,7 @@ from pathlib import Path
 __version__ = "0.1.0"
 
 # 1. Get the WAV filename supplied in Terminal.
-def get_audio_path():
+def parse_arguments():
     parser = argparse.ArgumentParser(
         description="Analyze a stereo WAV file and display its metadata"
         "and left/right frequency spectra."
@@ -26,11 +26,32 @@ def get_audio_path():
         "--version",
         action="version",
         version="Audio File Report (__version__)")
+    
+    display_group = parser.add_mutually_exclusive_group()
+
+    display_group.add_argument(
+        "--brief",
+        action="store_true",
+        help="Display a one line summary."
+    )
+
+    display_group.add_argument(
+        "--verbose",
+        action="store_true",
+        help="Display additional technical details."
+    )
+
+    display_group.add_argument(
+        "--detailed",
+        action="store_true",
+        help="Suppress normal report output."
+    )
+    
     args = parser.parse_args()
 
-    path = args.audio_file.expanduser()
+    args.audio_file = args.audio_file.expanduser()
 
-    return (path)
+    return args
 
 
 # 2. Read the WAV header and raw audio data.
@@ -231,7 +252,8 @@ def plot_stereo_spectrum(
 
 # 10. Coordinate the entire program.
 def main():
-    audio_path = get_audio_path()
+    args = parse_arguments()
+    audio_path = args.audio_file
 
     (
         channels,
@@ -306,4 +328,3 @@ if __name__ == "__main__":
     except KeyboardInterrupt:
         print("\nProgram interrupted by user. Exiting...")
 
-        
