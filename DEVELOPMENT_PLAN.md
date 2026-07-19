@@ -49,19 +49,19 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 
 ### Display Modes
 
-- [ ] Add a normal default report
-- [ ] Add `--brief` for a one-line summary
-- [ ] Add `--verbose` for detailed technical output
-- [ ] Add `--quiet` to suppress normal output
-- [ ] Make brief, verbose, and quiet modes mutually exclusive
+- [x] Add a normal default report
+- [x] Add `--brief` for a one-line summary
+- [x] Add `--verbose` for detailed technical output
+- [x] Add `--quiet` to suppress normal output
+- [x] Make brief, verbose, and quiet modes mutually exclusive
 
 ### Graph Control
 
-- [ ] Add `--plot show`
-- [ ] Add `--plot save`
-- [ ] Add `--plot both`
-- [ ] Add `--plot none`
-- [ ] Keep `show` as the default plot behavior
+- [x] Add `--plot show`
+- [x] Add `--plot save`
+- [x] Add `--plot both`
+- [x] Add `--plot none`
+- [x] Keep `show` as the default plot behavior
 - [ ] Add `--plot-file` to select the output filename
 - [ ] Add `--output-dir` to select an output folder
 - [ ] Generate a readable default PNG filename

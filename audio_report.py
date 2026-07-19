@@ -42,10 +42,17 @@ def parse_arguments():
     )
 
     display_group.add_argument(
-        "--detailed",
+        "--quiet",
         action="store_true",
         help="Suppress normal report output."
     )
+    display_group.add_argument(
+        "--plot",
+        choices=["show", "save", "both" , "none"],
+        default="show",
+        help="Display or save the frequency spectrum plot."
+    )
+    
     
     args = parser.parse_args()
 
