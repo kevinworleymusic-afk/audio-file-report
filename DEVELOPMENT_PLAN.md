@@ -41,8 +41,8 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Replace manual `sys.argv` handling with `argparse`
 - [x] Add automatically generated `--help` instructions
 - [x] Add a `--version` option
-- [ ] Accept relative and absolute file paths
-- [ ] Accept paths containing spaces
+- [x] Accept relative and absolute file paths
+- [x] Accept paths containing spaces
 - [ ] Expand `~` in file paths
 - [ ] Handle Unicode characters in filenames
 - [ ] Handle keyboard interruption with Control-C cleanly
