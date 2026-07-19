@@ -76,10 +76,10 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 
 ### File Validation
 
-- [ ] Confirm that the supplied path exists
-- [ ] Confirm that the path points to a file rather than a folder
-- [ ] Detect permission errors
-- [ ] Detect empty files
+- [x] Confirm that the supplied path exists
+- [x] Confirm that the path points to a file rather than a folder
+- [x] Detect permission errors (permission-denied when opening file)
+- [x] Check for zero-length files and flag them
 - [ ] Detect WAV files containing zero frames
 - [ ] Confirm that the file contains readable WAV data
 - [ ] Validate WAV structure rather than trusting only the extension
@@ -87,21 +87,21 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [ ] Explain unsupported encoding types
 - [ ] Explain unsupported bit depths
 - [ ] Explain unsupported channel counts
-- [ ] Distinguish missing-file, permission, format, and analysis errors
+- [x] Distinguish missing-file, permission, and empty-file errors (with specific exit codes)
 
 ### Diagnostics
 
 - [ ] Show concise errors by default
-- [ ] Add `--debug`
+- [x] Add `--debug` (prints validation diagnostics when enabled)
 - [ ] Show full tracebacks only in debug mode
 - [ ] Add `--log-file`
 - [ ] Include the program version in debug logs
 - [ ] Include Python and dependency versions in debug logs
 - [ ] Include the operating system in debug logs
-- [ ] Include the resolved input path in debug logs
+- [x] Include the resolved input path in debug logs (validation prints when missing)
 - [ ] Include active command-line options in debug logs
 - [ ] Provide actionable suggestions for correctable errors
-- [ ] Use clear operating-system exit codes
+- [x] Use clear operating-system exit codes (distinct codes for missing/permission/empty)
 
 ### Improved Metadata
 

@@ -3,6 +3,13 @@
 from os import path
 import os
 import matplotlib as mpl
+
+# Exit codes for validation failures
+EXIT_NOT_FOUND = 2
+EXIT_PERMISSION = 3
+EXIT_EMPTY = 4
+EXIT_NOT_FILE = 5
+EXIT_INVALID_WAV = 6
 import wave
 from pathlib import Path
 import sys
@@ -90,6 +97,12 @@ def parse_arguments():
     )
 
     parser.add_argument(
+        "--debug",
+        action="store_true",
+        help="Print debug information (including validation diagnostics).",
+    )
+
+    parser.add_argument(
         "--show",
         action="store_true",
         help="Request interactive display (overrides default save).",
@@ -124,25 +137,39 @@ def create_default_plot_filename(audio_path):
         return f"{audio_path.stem}_stereo_spectrum.png"
 
 
-def validate_input_path(audio_path: Path) -> None:
+def validate_input_path(audio_path: Path, debug: bool = False) -> None:
     """Confirm the supplied input path exists, is a file, and is readable.
 
     Exits the program with a clear message on failure.
     """
     if not audio_path.exists():
         print(f"Error: input path '{audio_path}' does not exist.")
-        sys.exit(2)
+        if debug:
+            print(f"DEBUG: looked for: {audio_path.resolve()}")
+        sys.exit(EXIT_NOT_FOUND)
 
     if not audio_path.is_file():
         print(f"Error: input path '{audio_path}' is not a file.")
-        sys.exit(2)
+        if debug:
+            print(f"DEBUG: path exists but is not a file: {audio_path}")
+        sys.exit(EXIT_NOT_FILE)
 
     try:
-        with open(audio_path, "rb"):
-            pass
+        # Check readability and non-empty
+        with open(audio_path, "rb") as fh:
+            fh.seek(0, os.SEEK_END)
+            size = fh.tell()
     except PermissionError:
         print(f"Error: permission denied reading '{audio_path}'.")
-        sys.exit(2)
+        if debug:
+            print(f"DEBUG: permission check failed for: {audio_path}")
+        sys.exit(EXIT_PERMISSION)
+
+    if size == 0:
+        print(f"Error: input file '{audio_path}' is empty.")
+        if debug:
+            print(f"DEBUG: file size (bytes): {size}")
+        sys.exit(EXIT_EMPTY)
 
 
 # 2. Read the WAV header and raw audio data.
@@ -369,7 +396,7 @@ def plot_stereo_spectrum(
 def main():
     args = parse_arguments()
     # Validate input path early
-    validate_input_path(args.audio_file)
+    validate_input_path(args.audio_file, debug=getattr(args, "debug", False))
     # Detect graphical display availability and adjust backend/plot mode.
     def _display_available():
         backend = mpl.get_backend().lower()
