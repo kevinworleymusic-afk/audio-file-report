@@ -64,7 +64,7 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Keep `show` as the default plot behavior
 - [x] Add `--plot-file` to select the output filename
 - [x] Add `--output-dir` to select an output folder
-- [ ] Generate a readable default PNG filename
+- [x] Generate a readable default PNG filename
 - [ ] Confirm where saved plots are located
 - [ ] Prevent accidental file overwriting
 - [ ] Add `--overwrite` to permit intentional replacement

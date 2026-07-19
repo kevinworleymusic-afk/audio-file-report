@@ -1,5 +1,6 @@
 #1. Imports
 
+from os import path
 import wave
 from pathlib import Path
 import sys
@@ -56,7 +57,7 @@ def parse_arguments():
     
     display_group.add_argument(
         "--plot-file",
-        type=path
+        type=path,
         help="Create file name for saved file."
     )
     
@@ -66,13 +67,14 @@ def parse_arguments():
         help="Setting Folder Directory to save the file."
     )
 
-
     args = parser.parse_args()
 
     args.audio_file = args.audio_file.expanduser()
 
     return args
 
+def create_default_plot_filename(audio_path):
+        return f"{audio_path.stem}_stereo_spectrum.png"
 
 # 2. Read the WAV header and raw audio data.
 def read_wav_file(audio_path):
