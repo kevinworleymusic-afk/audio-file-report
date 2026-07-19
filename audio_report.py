@@ -1,11 +1,14 @@
 #1. Imports
 
 from os import path
+import os
+import matplotlib as mpl
 import wave
 from pathlib import Path
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import gc
 import argparse
 from pathlib import Path
 # audio_path = Path("test_audio.wav")
@@ -51,13 +54,13 @@ def parse_arguments():
     display_group.add_argument(
         "--plot",
         choices=["show", "save", "both" , "none"],
-        default="show",
+        default="save",
         help="Display or save the frequency spectrum plot."
     )
     
     display_group.add_argument(
         "--plot-file",
-        type=path,
+        type=Path,
         help="Create file name for saved file."
     )
     
@@ -67,9 +70,53 @@ def parse_arguments():
         help="Setting Folder Directory to save the file."
     )
 
+    parser.add_argument(
+        "--overwrite",
+        action="store_true",
+        help="Allow overwriting existing plot files. By default files are renamed to avoid overwrite."
+    )
+
+    parser.add_argument(
+        "--dpi",
+        type=int,
+        default=300,
+        help="DPI (dots per inch) for saved plots. Higher values increase resolution."
+    )
+
+    parser.add_argument(
+        "--dpi-choice",
+        choices=["screen", "screen-high", "print"],
+        help="Preset DPI choices: 'screen' (~150), 'screen-high' (~200), 'print' (300). Overrides --dpi.",
+    )
+
+    parser.add_argument(
+        "--show",
+        action="store_true",
+        help="Request interactive display (overrides default save).",
+    )
+
+    parser.add_argument(
+        "--no-prompt",
+        action="store_true",
+        help="When no graphical display is detected, do not prompt; act as save.",
+    )
+
     args = parser.parse_args()
 
     args.audio_file = args.audio_file.expanduser()
+
+    # Map preset choices to concrete DPI values (preset overrides numeric --dpi)
+    if getattr(args, "dpi_choice", None):
+        dpi_map = {
+            "screen": 150,
+            "screen-high": 200,
+            "print": 300,
+        }
+        args.dpi = dpi_map[args.dpi_choice]
+
+    # If --show is requested, override default plot action
+    if getattr(args, "show", False):
+        args.plot = "show"
 
     return args
 
@@ -203,7 +250,8 @@ def plot_stereo_spectrum(
     left_db,
     right_db,
     plot_mode,
-    plot_path
+    plot_path,
+    dpi=300,
 ):
     frequency_range = (
         (frequencies >= 20)
@@ -273,23 +321,76 @@ def plot_stereo_spectrum(
     plt.legend()
     plt.tight_layout()
     
-    if plot_mode in ("save", "both"):
-        plt.savefig(
-            plot_path,
-            dpi=150,
-            bbox_inches="tight"
-        )
+    try:
+        if plot_mode in ("save", "both"):
+            plt.savefig(
+                plot_path,
+                dpi=dpi,
+                bbox_inches="tight"
+            )
 
-        print(f"Plot saved to: {plot_path.resolve()}")
+            print(f"Plot saved to: {plot_path.resolve()}")
 
         if plot_mode in ("show", "both"):
             plt.show()
+    finally:
+        try:
+            plt.close("all")
+        except Exception:
+            pass
 
-            plt.close()
+        try:
+            gc.collect()
+        except Exception:
+            pass
 
 # 10. Coordinate the entire program.
 def main():
     args = parse_arguments()
+    # Detect graphical display availability and adjust backend/plot mode.
+    def _display_available():
+        backend = mpl.get_backend().lower()
+        non_gui = {"agg", "pdf", "svg", "ps", "cairo"}
+
+        # If Matplotlib is already using a non-GUI backend, no display.
+        if any(b in backend for b in non_gui):
+            return False
+
+        # On Linux, require DISPLAY or WAYLAND_DISPLAY to be set.
+        if sys.platform.startswith("linux"):
+            if not (os.environ.get("DISPLAY") or os.environ.get("WAYLAND_DISPLAY")):
+                return False
+
+        # Otherwise assume a display is available (covers macOS, Windows typical cases).
+        return True
+
+    if not _display_available():
+        try:
+            import matplotlib.pyplot as _plt
+            _plt.switch_backend("Agg")
+        except Exception:
+            pass
+
+        if args.plot in ("show", "both"):
+            # If user explicitly requested --show or asked to skip prompts, don't ask interactively.
+            if getattr(args, "show", False) or getattr(args, "no_prompt", False):
+                print("No display detected — saving plot to file.")
+                args.plot = "save"
+            else:
+                try:
+                    resp = input(
+                        "No graphical display detected — save plot to file instead? [Y/n]: "
+                    ).strip().lower()
+                except EOFError:
+                    # non-interactive stdin; assume yes
+                    resp = "y"
+
+                if resp in ("", "y", "yes"):
+                    print("No display detected — saving plot to file.")
+                    args.plot = "save"
+                else:
+                    print("Aborting: graphical display required for '--plot show'.")
+                    sys.exit(0)
     audio_path = args.audio_file
 
     (
@@ -368,6 +469,21 @@ def main():
 
         plot_path = output_dir / plot_filename
 
+        # Prevent accidental overwrites unless user explicitly allowed it.
+        if not args.overwrite:
+            final_plot_path = plot_path
+            counter = 1
+            while final_plot_path.exists():
+                stem = plot_path.stem
+                suffix = plot_path.suffix
+                final_plot_path = plot_path.with_name(f"{stem}_{counter}{suffix}")
+                counter += 1
+
+            if final_plot_path != plot_path:
+                print(f"Target exists; saving as: {final_plot_path.resolve()}")
+
+            plot_path = final_plot_path
+
     if args.plot != "none":
         plot_stereo_spectrum(
             frequencies,
@@ -375,11 +491,14 @@ def main():
             right_db,
             args.plot,
             plot_path,
+            dpi=args.dpi,
         )
-       
-    if __name__ == "__main__":
-        try:
-            main()
-        except KeyboardInterrupt:
-            print("\nProgram interrupted by user. Exiting...")
+
+
+if __name__ == "__main__":
+    try:
+        main()
+    except KeyboardInterrupt:
+        print("\nProgram interrupted by user. Exiting...")
+
 

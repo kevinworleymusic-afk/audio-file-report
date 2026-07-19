@@ -66,12 +66,13 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Add `--output-dir` to select an output folder
 - [x] Generate a readable default PNG filename
 - [x] Generate a Save Function
-- [ ] Confirm where saved plots are located
-- [ ] Prevent accidental file overwriting
-- [ ] Add `--overwrite` to permit intentional replacement
-- [ ] Save graphs at a useful resolution
-- [ ] Close Matplotlib cleanly
-- [ ] Detect when a graphical display is unavailable
+- [x] Confirm where saved plots are located
+- [x] Prevent accidental file overwriting
+- [x] Add `--overwrite` to permit intentional replacement
+- [x] Save graphs at a useful resolution, set choice between 300 DPI, 200 DPI, and 150 DPI.
+- [x] Close Matplotlib cleanly
+- [x] Detect when a graphical display is unavailable
+- [x] Added an interactive prompt when no display is available.
 
 ### File Validation
 
