@@ -124,6 +124,27 @@ def create_default_plot_filename(audio_path):
         return f"{audio_path.stem}_stereo_spectrum.png"
 
 
+def validate_input_path(audio_path: Path) -> None:
+    """Confirm the supplied input path exists, is a file, and is readable.
+
+    Exits the program with a clear message on failure.
+    """
+    if not audio_path.exists():
+        print(f"Error: input path '{audio_path}' does not exist.")
+        sys.exit(2)
+
+    if not audio_path.is_file():
+        print(f"Error: input path '{audio_path}' is not a file.")
+        sys.exit(2)
+
+    try:
+        with open(audio_path, "rb"):
+            pass
+    except PermissionError:
+        print(f"Error: permission denied reading '{audio_path}'.")
+        sys.exit(2)
+
+
 # 2. Read the WAV header and raw audio data.
 def read_wav_file(audio_path):
     with wave.open(str(audio_path), "rb") as audio_file:
@@ -347,6 +368,8 @@ def plot_stereo_spectrum(
 # 10. Coordinate the entire program.
 def main():
     args = parse_arguments()
+    # Validate input path early
+    validate_input_path(args.audio_file)
     # Detect graphical display availability and adjust backend/plot mode.
     def _display_available():
         backend = mpl.get_backend().lower()
