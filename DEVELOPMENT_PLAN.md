@@ -39,8 +39,8 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 ### Command-Line Interface
 
 - [x] Replace manual `sys.argv` handling with `argparse`
-- [ ] Add automatically generated `--help` instructions
-- [ ] Add a `--version` option
+- [x] Add automatically generated `--help` instructions
+- [x] Add a `--version` option
 - [ ] Accept relative and absolute file paths
 - [ ] Accept paths containing spaces
 - [ ] Expand `~` in file paths

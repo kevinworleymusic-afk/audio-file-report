@@ -21,6 +21,11 @@ def get_audio_path():
         "audio_file", 
         type=Path,
         help="Path to the Stereo WAV file to analyze.")
+    
+    parser.add_argument(
+        "--version",
+        action="version",
+        version="Audio File Report (__version__)")
     args = parser.parse_args()
 
     return (args.audio_file)
