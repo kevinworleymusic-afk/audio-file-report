@@ -6,9 +6,9 @@ import sys
 import numpy as np
 import matplotlib.pyplot as plt
 import argparse
+from pathlib import Path
 # audio_path = Path("test_audio.wav")
 __version__ = "0.1.0"
-
 
 # 1. Get the WAV filename supplied in Terminal.
 def get_audio_path():
@@ -28,7 +28,9 @@ def get_audio_path():
         version="Audio File Report (__version__)")
     args = parser.parse_args()
 
-    return (args.audio_file)
+    path = args.audio_file.expanduser()
+
+    return (path)
 
 
 # 2. Read the WAV header and raw audio data.
