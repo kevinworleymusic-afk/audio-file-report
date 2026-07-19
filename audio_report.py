@@ -46,6 +46,7 @@ def parse_arguments():
         action="store_true",
         help="Suppress normal report output."
     )
+   
     display_group.add_argument(
         "--plot",
         choices=["show", "save", "both" , "none"],
@@ -53,7 +54,19 @@ def parse_arguments():
         help="Display or save the frequency spectrum plot."
     )
     
+    display_group.add_argument(
+        "--plot-file",
+        type=path
+        help="Create file name for saved file."
+    )
     
+    display_group.add_argument(
+        "--output-dir",
+        type=Path,
+        help="Setting Folder Directory to save the file."
+    )
+
+
     args = parser.parse_args()
 
     args.audio_file = args.audio_file.expanduser()
