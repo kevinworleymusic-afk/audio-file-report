@@ -43,8 +43,8 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Add a `--version` option
 - [x] Accept relative and absolute file paths
 - [x] Accept paths containing spaces
-- [ ] Expand `~` in file paths
-- [ ] Handle Unicode characters in filenames
+- [x] Expand `~` in file paths
+- [x] Handle Unicode characters in filenames
 - [ ] Handle keyboard interruption with Control-C cleanly
 
 ### Display Modes
