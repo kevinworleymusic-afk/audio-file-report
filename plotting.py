@@ -13,6 +13,7 @@ def plot_stereo_spectrum(
     plot_mode: str,
     plot_path: Optional[Path],
     dpi: int = 300,
+    report_format: str = None,
 ) -> None:
     frequency_range = (
         (frequencies >= 20)
@@ -90,7 +91,12 @@ def plot_stereo_spectrum(
                 bbox_inches="tight"
             )
 
-            print(f"Plot saved to: {plot_path.resolve()}")
+            if report_format == "compact":
+                print(f"Saved: {plot_path.name}")
+            elif report_format == "timed":
+                print(f"Plot saved to: {plot_path.resolve()}")
+            else:
+                print(f"Plot saved to: {plot_path.resolve()}")
         if plot_mode in ("show", "both"):
             try:
                 plt.show()

@@ -106,19 +106,24 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 
 
 ### Improved Metadata
-
-- [ ] Display the program version
-- [ ] Display file size
-- [ ] Display the encoding type
-- [ ] Describe channel layout as mono, stereo, or multichannel
-- [ ] Format sample rate clearly
-- [ ] Display sample width in bytes
-- [ ] Display bit depth in bits
-- [ ] Format frame count clearly
-- [ ] Display duration in seconds
-- [ ] Display duration as `HH:MM:SS`
-- [ ] Display estimated uncompressed bitrate
-- [ ] Display total analysis time in verbose mode
+ - [x] Display the program version
+ - [x] Display file size
+ - [x] Display the encoding type
+ - [x] Describe channel layout as mono, stereo, or multichannel
+ - [x] Format sample rate clearly
+ - [x] Display sample width in bytes
+ - [x] Display bit depth in bits
+ - [x] Format frame count clearly
+ - [x] Display duration in seconds
+ - [x] Display duration as `HH:MM:SS`
+ - [x] Display estimated uncompressed bitrate
+ 	- Note: format bitrate for readability — show as "<X> kbps" when under 1000 kbps, and as "<Y.YY> Mbps (<X> kbps)" when >= 1000 kbps.
+ - [x] Add `--report-format` option to select `compact`, `verbose`, or `timed` metadata layouts (maps from `--brief`/`--verbose` when not explicitly provided)
+ - [x] Display compact metadata as a single-line summary
+ - [x] Display verbose metadata in grouped sections
+ - [x] Display timing-focused metadata in `timed` mode, including per-step read/FFT/plot timings
+ - [x] Add `--brief` / `--verbose` compatibility mapping for report-format
+ - [x] Display total analysis time in verbose mode
 
 ### Project Setup and Documentation
 
@@ -140,6 +145,8 @@ Updates made in this workspace (refactor & docs):
  - [x] Added README snippet documenting logging behavior and examples for `--log-file` and `--debug`
  - [x] Logged program/version, Python, OS, and dependency versions to `--log-file` (startup header)
  - [x] Logged active command-line options and resolved paths in debug logs
+ - [x] Logged active command-line options and resolved paths in debug logs
+ - [x] Include HH:MM:SS duration in debug logs and human report
 
 ## Version 0.3.0 — Level and Dynamics Measurements
 
