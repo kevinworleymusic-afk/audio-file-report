@@ -65,6 +65,12 @@ def _log_startup_environment(args):
 
 def main():
     args = parse_arguments()
+    import time
+
+    try:
+        from common import __version__ as prog_version
+    except Exception:
+        prog_version = "unknown"
 
     # Configure logging early based on CLI options.
     log_file = getattr(args, "log_file", None)
@@ -175,12 +181,22 @@ def main():
                     sys.exit(0)
     audio_path = args.audio_file
 
+    # capture a small set of file metadata efficiently
+    try:
+        file_size = audio_path.stat().st_size
+    except Exception:
+        file_size = None
+
+    start_time = time.perf_counter()
+
     (
         channels,
         sample_rate,
         sample_width,
         frame_count,
         audio_data,
+        comptype,
+        compname,
     ) = read_wav_file(audio_path)
 
     bit_depth = sample_width * 8
@@ -190,13 +206,47 @@ def main():
         sample_rate,
     )
 
-    print_report(
+    # Compose a simple encoding description
+    encoding = None
+    if comptype and compname:
+        encoding = f"{comptype} ({compname})"
+
+    # Log duration in both seconds and HH:MM:SS for debug traces
+    hrs = int(duration // 3600)
+    mins = int((duration % 3600) // 60)
+    secs = int(duration % 60)
+    logger = logging.getLogger(__name__)
+    logger.debug("Duration: %.2f seconds (%02d:%02d:%02d)", duration, hrs, mins, secs)
+    if file_size is not None:
+        logger.debug("File size: %d bytes", file_size)
+    if encoding:
+        logger.debug("Encoding: %s", encoding)
+    try:
+        bits_per_second = sample_rate * bit_depth * channels
+        kbps = bits_per_second / 1000.0
+        if kbps >= 1000:
+            mbps = kbps / 1000.0
+            logger.debug(
+                "Estimated uncompressed bitrate: %.2f Mbps (%.0f kbps)", mbps, kbps
+            )
+        else:
+            logger.debug("Estimated uncompressed bitrate: %.0f kbps", kbps)
+    except Exception:
+        pass
+
+    from analysis import print_report as _print_report
+
+    _print_report(
         audio_path,
         channels,
         sample_rate,
         bit_depth,
         frame_count,
         duration,
+        file_size=file_size,
+        encoding=encoding,
+        program_version=prog_version,
+        report_format=getattr(args, "report_format", None),
     )
 
     validate_audio_format(
@@ -246,6 +296,7 @@ def main():
                 args.plot,
                 plot_path,
                 dpi=args.dpi,
+                report_format=getattr(args, "report_format", None),
             )
         except Exception as exc:
             logger = logging.getLogger(__name__)
@@ -254,6 +305,31 @@ def main():
             if getattr(args, "debug", False):
                 traceback.print_exc()
             sys.exit(1)
+
+    total_time = time.perf_counter() - start_time
+    # Log total analysis time to debug log and optionally print in verbose mode
+    logging.getLogger(__name__).debug("Total analysis time: %.2f seconds", total_time)
+    if getattr(args, "verbose", False):
+        print(f"Total analysis time: {total_time:.2f} seconds")
+
+    # If the user selected the timing-focused report, print it now with the total analysis time
+    if getattr(args, "report_format", None) == "timed":
+        try:
+            _print_report(
+                audio_path,
+                channels,
+                sample_rate,
+                bit_depth,
+                frame_count,
+                duration,
+                file_size=file_size,
+                encoding=encoding,
+                program_version=prog_version,
+                report_format="timed",
+                total_time=total_time,
+            )
+        except Exception:
+            logging.getLogger(__name__).exception("Failed to print timed report")
 
 
 if __name__ == "__main__":

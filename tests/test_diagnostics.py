@@ -62,5 +62,20 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertIn("Program version", text)
             self.assertIn("matplotlib backend", text)
 
+    def test_metadata_in_log(self):
+        test_audio = Path(__file__).resolve().parents[1] / "test_audio.wav"
+        if not test_audio.exists():
+            self.skipTest("test_audio.wav not present")
+        with tempfile.TemporaryDirectory() as td:
+            logfile = Path(td) / "debug_meta.log"
+            res = self.run_cmd([str(test_audio), "--log-file", str(logfile)])
+            self.assertEqual(res.returncode, 0)
+            text = logfile.read_text()
+            # Duration HH:MM:SS
+            self.assertRegex(text, r"Duration: .*\(\d{2}:\d{2}:\d{2}\)")
+            self.assertIn("File size:", text)
+            self.assertIn("Encoding:", text)
+            self.assertIn("Estimated uncompressed bitrate", text)
+
 if __name__ == "__main__":
     unittest.main()

@@ -31,15 +31,134 @@ def print_report(
     bit_depth: int,
     frame_count: int,
     duration: float,
+    file_size: int = None,
+    encoding: str = None,
+    program_version: str = None,
+    report_format: str = None,
+    total_time: float = None,
+    read_time: float = None,
+    spectrum_time: float = None,
+    plot_time: float = None,
 ) -> None:
+    # Decide which layout to use: compact or verbose. Default mirrors previous behavior.
+    layout = report_format or "verbose"
+
+    if layout == "compact":
+        # True single-line compact summary for easy scanning and CSV-like consumption
+        # Fields: filename | size_kb | layout | samplerate | bitdepth | frames | duration | bitrate
+        size_kb = f"{file_size/1024:.1f} KB" if file_size is not None else "unknown"
+        if channels == 1:
+            layout_name = "mono"
+        elif channels == 2:
+            layout_name = "stereo"
+        else:
+            layout_name = f"{channels}-channel"
+
+        bitrate_str = "unknown"
+        try:
+            bits_per_second = sample_rate * bit_depth * channels
+            kbps = bits_per_second / 1000.0
+            if kbps >= 1000:
+                mbps = kbps / 1000.0
+                bitrate_str = f"{mbps:.2f} Mbps ({kbps:.0f} kbps)"
+            else:
+                bitrate_str = f"{kbps:.0f} kbps"
+        except Exception:
+            pass
+
+        hh = int(duration // 3600)
+        mm = int((duration % 3600) // 60)
+        ss = int(duration % 60)
+
+        print(
+            f"{audio_path.name} | {size_kb} | {layout_name} | {sample_rate} Hz | {bit_depth}-bit | {frame_count:,} frames | {duration:.2f} s ({hh:02d}:{mm:02d}:{ss:02d}) | {bitrate_str}"
+        )
+        return
+
+    if layout == "timed":
+        # Timing-focused layout: emphasize analysis duration and total processing time
+        header = f"Audio File Report — {program_version or 'unknown'}"
+        print(header)
+        print(40 * "-")
+        print(f"File: {audio_path.name}")
+        if file_size is not None:
+            print(f"File size: {file_size:,} bytes")
+
+        print(f"Duration: {duration:.2f} seconds ({int(duration//3600):02d}:{int((duration%3600)//60):02d}:{int(duration%60):02d})")
+
+        try:
+            bits_per_second = sample_rate * bit_depth * channels
+            kbps = bits_per_second / 1000.0
+            if kbps >= 1000:
+                mbps = kbps / 1000.0
+                print(f"Estimated uncompressed bitrate: {mbps:.2f} Mbps ({kbps:.0f} kbps)")
+            else:
+                print(f"Estimated uncompressed bitrate: {kbps:.0f} kbps")
+        except Exception:
+            pass
+
+        if total_time is not None:
+            print(f"Total analysis time: {total_time:.2f} seconds")
+        else:
+            print("Total analysis time: (not available)")
+
+        # Per-step timings for profiling
+        parts = []
+        if read_time is not None:
+            parts.append(f"Read: {read_time:.2f} s")
+        if spectrum_time is not None:
+            parts.append(f"FFT: {spectrum_time:.2f} s")
+        if plot_time is not None:
+            parts.append(f"Plot: {plot_time:.2f} s")
+        if parts:
+            print("(" + ", ".join(parts) + ")")
+
+        return
+
+    # Verbose layout (default)
     print("AUDIO FILE REPORT")
     print("-----------------")
+    if program_version:
+        print(f"Program version: {program_version}")
+        print("")
     print(f"File: {audio_path.name}")
-    print(f"Channels: {channels}")
+    # Human-friendly channel description
+    if channels == 1:
+        layout = "mono"
+    elif channels == 2:
+        layout = "stereo"
+    else:
+        layout = f"{channels}-channel"
+
+    print(f"Channels: {channels} ({layout})")
     print(f"Sample rate: {sample_rate} Hz")
+    print(f"Sample width: {bit_depth//8} bytes")
     print(f"Bit depth: {bit_depth}-bit")
-    print(f"Frames: {frame_count}")
+    print(f"Frames: {frame_count:,}")
     print(f"Duration: {duration:.2f} seconds")
+    # Human-readable HH:MM:SS
+    hrs = int(duration // 3600)
+    mins = int((duration % 3600) // 60)
+    secs = int(duration % 60)
+    print(f"Duration (HH:MM:SS): {hrs:02d}:{mins:02d}:{secs:02d}")
+
+    if file_size is not None:
+        print(f"File size: {file_size:,} bytes")
+
+    if encoding:
+        print(f"Encoding: {encoding}")
+
+    # Estimated uncompressed bitrate (bits per second)
+    try:
+        bits_per_second = sample_rate * bit_depth * channels
+        kbps = bits_per_second / 1000.0
+        if kbps >= 1000:
+            mbps = kbps / 1000.0
+            print(f"Estimated uncompressed bitrate: {mbps:.2f} Mbps ({kbps:.0f} kbps)")
+        else:
+            print(f"Estimated uncompressed bitrate: {kbps:.0f} kbps")
+    except Exception:
+        pass
 
 
 def separate_stereo_channels(audio_data: bytes, channels: int):

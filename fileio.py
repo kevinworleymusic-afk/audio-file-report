@@ -133,6 +133,8 @@ def read_wav_file(audio_path: Path):
         sample_rate = audio_file.getframerate()
         sample_width = audio_file.getsampwidth()
         frame_count = audio_file.getnframes()
+        comptype = audio_file.getcomptype()
+        compname = audio_file.getcompname()
         audio_data = audio_file.readframes(frame_count)
 
-    return channels, sample_rate, sample_width, frame_count, audio_data
+    return channels, sample_rate, sample_width, frame_count, audio_data, comptype, compname

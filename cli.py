@@ -101,6 +101,16 @@ def parse_arguments():
     )
 
     parser.add_argument(
+        "--report-format",
+        choices=["compact", "verbose", "timed"],
+        help=(
+            "Choose the metadata report layout: 'compact' for a one-line/compact "
+            "summary, 'verbose' for grouped details, or 'timed' to emphasize timing "
+            "information. If omitted, `--brief`/`--verbose` flags control output."
+        ),
+    )
+
+    parser.add_argument(
         "--show",
         action="store_true",
         help="Request interactive display (overrides default save).",
@@ -130,6 +140,15 @@ def parse_arguments():
     # If --show is requested, override default plot action
     if getattr(args, "show", False):
         args.plot = "show"
+
+    # Map brief/verbose flags into a consistent report_format value when not explicitly set
+    if getattr(args, "report_format", None) is None:
+        if getattr(args, "brief", False):
+            args.report_format = "compact"
+        elif getattr(args, "verbose", False):
+            args.report_format = "verbose"
+        else:
+            args.report_format = None
 
     return args
 
