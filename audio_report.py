@@ -5,20 +5,25 @@ from pathlib import Path
 import sys
 import numpy as np
 import matplotlib.pyplot as plt
+import argparse
 # audio_path = Path("test_audio.wav")
 __version__ = "0.1.0"
 
 
 # 1. Get the WAV filename supplied in Terminal.
 def get_audio_path():
-    if len(sys.argv) < 2:
-        print(
-            "Usage: python3 audio_report.py "
-            "<audio-file.wav>"
+    parser = argparse.ArgumentParser(
+        description="Analyze a stereo WAV file and display its metadata"
+        "and left/right frequency spectra."
         )
-        sys.exit(1)
+    
+    parser.add_argument(
+        "audio_file", 
+        type=Path,
+        help="Path to the Stereo WAV file to analyze.")
+    args = parser.parse_args()
 
-    return Path(sys.argv[1])
+    return (args.audio_file)
 
 
 # 2. Read the WAV header and raw audio data.
