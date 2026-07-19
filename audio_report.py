@@ -203,7 +203,7 @@ def plot_stereo_spectrum(
     left_db,
     right_db,
     plot_mode,
-    plot_path=None
+    plot_path
 ):
     frequency_range = (
         (frequencies >= 20)
