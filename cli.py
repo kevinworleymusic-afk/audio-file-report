@@ -112,6 +112,12 @@ def parse_arguments():
         help="When no graphical display is detected, do not prompt; act as save.",
     )
 
+    parser.add_argument(
+        "--log-file",
+        type=Path,
+        help="Path to a file to write detailed logs (debug + tracebacks).",
+    )
+
     args = parser.parse_args()
 
     args.audio_file = args.audio_file.expanduser()

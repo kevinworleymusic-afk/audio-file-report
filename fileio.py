@@ -1,5 +1,6 @@
 import os
 import sys
+import logging
 from pathlib import Path
 import wave
 
@@ -11,18 +12,20 @@ from common import (
     EXIT_INVALID_WAV,
 )
 
+logger = logging.getLogger(__name__)
+
 
 def validate_input_path(audio_path: Path, debug: bool = False) -> None:
     if not audio_path.exists():
-        print(f"Error: input path '{audio_path}' does not exist.")
-        if debug:
-            print(f"DEBUG: looked for: {audio_path.resolve()}")
+        logger.debug("Input path missing: %s", audio_path)
+        print(f"Error: input path '{audio_path}' does not exist.", file=sys.stderr)
+        print("Suggestion: check the path and filename (quote spaces) or run: ls -l", file=sys.stderr)
         sys.exit(EXIT_NOT_FOUND)
 
     if not audio_path.is_file():
-        print(f"Error: input path '{audio_path}' is not a file.")
-        if debug:
-            print(f"DEBUG: path exists but is not a file: {audio_path}")
+        logger.debug("Input path is not a file: %s", audio_path)
+        print(f"Error: input path '{audio_path}' is not a file.", file=sys.stderr)
+        print("Suggestion: provide a file path (not a directory). Use an explicit filename.", file=sys.stderr)
         sys.exit(EXIT_NOT_FILE)
 
     try:
@@ -30,15 +33,15 @@ def validate_input_path(audio_path: Path, debug: bool = False) -> None:
             fh.seek(0, os.SEEK_END)
             size = fh.tell()
     except PermissionError:
-        print(f"Error: permission denied reading '{audio_path}'.")
-        if debug:
-            print(f"DEBUG: permission check failed for: {audio_path}")
+        logger.debug("Permission denied reading: %s", audio_path, exc_info=True)
+        print(f"Error: permission denied reading '{audio_path}'.", file=sys.stderr)
+        print("Suggestion: check file permissions (ls -l) and grant read access, e.g. chmod u+r <file>.", file=sys.stderr)
         sys.exit(EXIT_PERMISSION)
 
     if size == 0:
-        print(f"Error: input file '{audio_path}' is empty.")
-        if debug:
-            print(f"DEBUG: file size (bytes): {size}")
+        logger.debug("Input file is empty: %s (size=0)", audio_path)
+        print(f"Error: input file '{audio_path}' is empty.", file=sys.stderr)
+        print("Suggestion: regenerate the file or ensure the correct source path was used.", file=sys.stderr)
         sys.exit(EXIT_EMPTY)
 
 
@@ -51,30 +54,35 @@ def validate_wav_file(audio_path: Path, debug: bool = False) -> None:
             comptype = wf.getcomptype()
             compname = wf.getcompname()
 
-            if debug:
-                print(f"DEBUG: WAV channels={channels}, sampwidth={sampwidth}, frames={nframes}")
+            logger.debug("WAV header: channels=%s sampwidth=%s frames=%s", channels, sampwidth, nframes)
 
             if nframes == 0:
-                print(f"Error: WAV file '{audio_path}' contains zero frames.")
+                print(f"Error: WAV file '{audio_path}' contains zero frames.", file=sys.stderr)
+                logger.debug("Zero frames in WAV: %s", audio_path)
                 sys.exit(EXIT_INVALID_WAV)
 
+            # try reading a small amount of data to ensure frames are readable
             try:
                 wf.rewind()
-                sample = wf.readframes(1)
-            except Exception as e:
-                print(f"Error: could not read frames from WAV file: {e}")
-                if debug:
-                    import traceback; traceback.print_exc()
+                _ = wf.readframes(1)
+            except Exception:
+                logger.debug("Could not read WAV frames: %s", audio_path, exc_info=True)
+                print("Error: could not read frames from WAV file.", file=sys.stderr)
                 sys.exit(EXIT_INVALID_WAV)
 
+            # basic sanity check for sample width
             if sampwidth not in (1, 2, 3, 4):
-                print(f"Error: unsupported sample width ({sampwidth} bytes) in WAV file.")
+                logger.debug("Unsupported sampwidth: %s", sampwidth)
+                print(f"Error: unsupported sample width ({sampwidth} bytes) in WAV file.", file=sys.stderr)
                 sys.exit(EXIT_INVALID_WAV)
 
+            # Check compression type (expect PCM/uncompressed)
             if comptype != "NONE":
-                print(f"Error: unsupported WAV compression type: {comptype} ({compname})")
+                logger.debug("Unsupported compression type: %s (%s)", comptype, compname)
+                print(f"Error: unsupported WAV compression type: {comptype} ({compname})", file=sys.stderr)
                 sys.exit(EXIT_INVALID_WAV)
 
+            # Additional check for 32-bit files: distinguish float vs int
             if sampwidth == 4:
                 try:
                     wf.rewind()
@@ -95,30 +103,27 @@ def validate_wav_file(audio_path: Path, debug: bool = False) -> None:
                             maxi = 0
 
                         if maxf <= 1.5:
-                            if debug:
-                                print("DEBUG: detected 32-bit float WAV (values in -1..1).")
+                            logger.debug("Detected 32-bit float WAV (values in -1..1).")
                         elif maxi > 0:
-                            if debug:
-                                print("DEBUG: detected 32-bit integer WAV.")
+                            logger.debug("Detected 32-bit integer WAV.")
                         else:
-                            if debug:
-                                print("DEBUG: could not determine 32-bit WAV subtype; assuming integer.")
+                            logger.debug("Could not determine 32-bit WAV subtype; assuming integer.")
                 except Exception:
-                    if debug:
-                        import traceback; traceback.print_exc()
-
+                    logger.debug("Error while inspecting 32-bit WAV subtype: %s", audio_path, exc_info=True)
     except wave.Error as e:
-        print(f"Error: invalid WAV file or corrupted header: {e}")
-        if debug:
-            import traceback; traceback.print_exc()
+        logger.debug("Invalid WAV file or corrupted header: %s", e, exc_info=True)
+        print(f"Error: invalid WAV file or corrupted header: {e}", file=sys.stderr)
+        print("Suggestion: verify the file is a valid PCM WAV (try 'ffmpeg -v error -i <file>').", file=sys.stderr)
         sys.exit(EXIT_INVALID_WAV)
     except EOFError:
-        print("Error: unexpected end of file while reading WAV header.")
+        logger.debug("Unexpected EOF while reading WAV header: %s", audio_path, exc_info=True)
+        print("Error: unexpected end of file while reading WAV header.", file=sys.stderr)
+        print("Suggestion: the file appears truncated — re-copy or re-export the source.", file=sys.stderr)
         sys.exit(EXIT_INVALID_WAV)
     except Exception as e:
-        print(f"Error: cannot read WAV file: {e}")
-        if debug:
-            import traceback; traceback.print_exc()
+        logger.debug("Cannot read WAV file: %s", e, exc_info=True)
+        print(f"Error: cannot read WAV file: {e}", file=sys.stderr)
+        print("Suggestion: inspect the file with a media tool (ffmpeg/sox) or run with --debug for details.", file=sys.stderr)
         sys.exit(EXIT_INVALID_WAV)
 
 

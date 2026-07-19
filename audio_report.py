@@ -1,4 +1,9 @@
 from pathlib import Path
+import logging
+import traceback
+import sys
+import os
+import platform
 
 from cli import parse_arguments, display_available, get_final_plot_path
 from fileio import validate_input_path, validate_wav_file, read_wav_file
@@ -13,13 +18,129 @@ from analysis import (
 from plotting import plot_stereo_spectrum
 
 
+def _log_startup_environment(args):
+    """Write detailed environment and dependency info to the debug log.
+
+    This includes program version, resolved command-line options, Python
+    executable and version, OS/platform details, working directory, PID,
+    and key dependency versions (numpy, matplotlib)."""
+    logger = logging.getLogger(__name__)
+    try:
+        from common import __version__ as prog_version
+    except Exception:
+        prog_version = "unknown"
+
+    logger.debug("Program version: %s", prog_version)
+    try:
+        logger.debug("Command-line args: %s", vars(args))
+    except Exception:
+        logger.debug("Command-line args: (unavailable)")
+
+    logger.debug("Python executable: %s", sys.executable)
+    logger.debug("Python version: %s", sys.version.replace("\n", " "))
+    logger.debug("Platform: %s", platform.platform())
+    logger.debug("Machine: %s", platform.machine())
+    logger.debug("Processor: %s", platform.processor())
+    logger.debug("Hostname: %s", platform.node())
+    logger.debug("Working dir: %s", os.getcwd())
+    logger.debug("Process id: %s", os.getpid())
+
+    # Dependency versions
+    for mod in ("numpy", "matplotlib", "scipy"):
+        try:
+            m = __import__(mod)
+            ver = getattr(m, "__version__", str(m))
+            logger.debug("Dependency %s: %s", mod, ver)
+        except Exception:
+            logger.debug("Dependency %s: not installed", mod)
+
+    try:
+        import matplotlib
+
+        logger.debug("matplotlib backend: %s", matplotlib.get_backend())
+    except Exception:
+        logger.debug("matplotlib not available to report backend")
+
+
+
 def main():
     args = parse_arguments()
 
+    # Configure logging early based on CLI options.
+    log_file = getattr(args, "log_file", None)
+    root_logger = logging.getLogger()
+    root_logger.handlers[:] = []
+    # If a log file is requested, capture detailed debug logs there regardless
+    # of the `--debug` console verbosity flag. Console remains concise by default.
+    if log_file:
+        root_logger.setLevel(logging.DEBUG)
+    else:
+        root_level = logging.DEBUG if getattr(args, "debug", False) else logging.INFO
+        root_logger.setLevel(root_level)
+
+    if log_file:
+        fh = logging.FileHandler(str(log_file), encoding="utf-8")
+        fh.setLevel(logging.DEBUG)
+        fh.setFormatter(
+            logging.Formatter("%(asctime)s %(levelname)s %(name)s: %(message)s")
+        )
+        root_logger.addHandler(fh)
+        # Reduce extremely verbose matplotlib and related loggers in the debug file
+        try:
+            for mod in (
+                "matplotlib",
+                "matplotlib.pyplot",
+                "matplotlib.backends",
+                "matplotlib.font_manager",
+                "matplotlib.ft2font",
+            ):
+                logging.getLogger(mod).setLevel(logging.WARNING)
+        except Exception:
+            pass
+
+    # Log environment and dependency details to the debug log if present.
+    if log_file or getattr(args, "debug", False):
+        try:
+            _log_startup_environment(args)
+        except Exception:
+            logging.getLogger(__name__).exception("Failed to log startup environment")
+
+    # Keep console output concise by default (warnings/errors only unless --debug)
+    ch = logging.StreamHandler()
+    ch_level = logging.DEBUG if getattr(args, "debug", False) else logging.WARNING
+    ch.setLevel(ch_level)
+    ch.setFormatter(logging.Formatter("%(levelname)s: %(message)s"))
+    # By default strip exception tracebacks from console output so users see
+    # concise error lines; keep full tracebacks in the file log. When `--debug`
+    # is set, allow exception info to be printed to the console.
+    class _StripExceptionInfoFilter(logging.Filter):
+        def __init__(self, show_exc: bool = False):
+            super().__init__()
+            self.show_exc = show_exc
+
+        def filter(self, record: logging.LogRecord) -> bool:
+            if not self.show_exc:
+                record.exc_info = None
+                record.exc_text = None
+            return True
+
+    ch.addFilter(_StripExceptionInfoFilter(show_exc=getattr(args, "debug", False)))
+    root_logger.addHandler(ch)
+
     # Validate input path early
-    validate_input_path(args.audio_file, debug=getattr(args, "debug", False))
-    # Validate WAV structure and readable content
-    validate_wav_file(args.audio_file, debug=getattr(args, "debug", False))
+    try:
+        validate_input_path(args.audio_file, debug=getattr(args, "debug", False))
+        # Validate WAV structure and readable content
+        validate_wav_file(args.audio_file, debug=getattr(args, "debug", False))
+    except Exception as exc:
+        logger = logging.getLogger(__name__)
+        # Log full traceback to log file when configured
+        logger.exception("Validation failed")
+        # Concise message to user
+        print(f"Error: {exc}", file=sys.stderr)
+        if getattr(args, "debug", False):
+            traceback.print_exc()
+        sys.exit(1)
 
     # Detect graphical display availability and adjust backend/plot mode.
     if not display_available():
@@ -117,129 +238,22 @@ def main():
     plot_path = get_final_plot_path(audio_path, args)
 
     if args.plot != "none":
-        plot_stereo_spectrum(
-            frequencies,
-            left_db,
-            right_db,
-            args.plot,
-            plot_path,
-            dpi=args.dpi,
-        )
-
-
-if __name__ == "__main__":
-    try:
-        main()
-    except KeyboardInterrupt:
-        print("\nProgram interrupted by user. Exiting...")
-
-# 10. Coordinate the entire program.
-def main():
-    args = parse_arguments()
-    # Validate input path early
-    validate_input_path(args.audio_file, debug=getattr(args, "debug", False))
-    # Validate WAV structure and readable content
-    validate_wav_file(args.audio_file, debug=getattr(args, "debug", False))
-    # Detect graphical display availability and adjust backend/plot mode.
-    if not display_available():
         try:
-            plt.switch_backend("Agg")
-        except Exception:
-            pass
-
-        if args.plot in ("show", "both"):
-            # If user explicitly requested --show or asked to skip prompts, don't ask interactively.
-            if getattr(args, "show", False) or getattr(args, "no_prompt", False):
-                print("No display detected — saving plot to file.")
-                args.plot = "save"
-            else:
-                try:
-                    resp = input(
-                        "No graphical display detected — save plot to file instead? [Y/n]: "
-                    ).strip().lower()
-                except EOFError:
-                    # non-interactive stdin; assume yes
-                    resp = "y"
-
-                if resp in ("", "y", "yes"):
-                    print("No display detected — saving plot to file.")
-                    args.plot = "save"
-                else:
-                    print("Aborting: graphical display required for '--plot show'.")
-                    sys.exit(0)
-    audio_path = args.audio_file
-
-    (
-        channels,
-        sample_rate,
-        sample_width,
-        frame_count,
-        audio_data,
-    ) = read_wav_file(audio_path)
-
-    bit_depth = sample_width * 8
-
-    duration = calculate_duration(
-        frame_count,
-        sample_rate,
-    )
-
-    print_report(
-        audio_path,
-        channels,
-        sample_rate,
-        bit_depth,
-        frame_count,
-        duration,
-    )
-
-    validate_audio_format(
-        sample_width,
-        channels,
-    )
-
-    (
-        left_channel,
-        right_channel,
-    ) = separate_stereo_channels(
-        audio_data,
-        channels,
-    )
-
-    (
-        frequencies,
-        left_magnitude,
-    ) = calculate_spectrum(
-        left_channel,
-        sample_rate,
-    )
-
-    (
-        _,
-        right_magnitude,
-    ) = calculate_spectrum(
-        right_channel,
-        sample_rate,
-    )
-
-    (
-        left_db,
-        right_db,
-    ) = convert_spectra_to_db(
-        left_magnitude,
-        right_magnitude,
-    )
-    plot_path = get_final_plot_path(audio_path, args)
-
-    if args.plot != "none":
-        plot_stereo_spectrum(
-            frequencies,
-            left_db,
-            right_db,
-            args.plot,
-            plot_path,
-            dpi=args.dpi,
-        )
+            plot_stereo_spectrum(
+                frequencies,
+                left_db,
+                right_db,
+                args.plot,
+                plot_path,
+                dpi=args.dpi,
+            )
+        except Exception as exc:
+            logger = logging.getLogger(__name__)
+            logger.exception("Plotting failed")
+            print(f"Error: plotting failed: {exc}", file=sys.stderr)
+            if getattr(args, "debug", False):
+                traceback.print_exc()
+            sys.exit(1)
 
 
 if __name__ == "__main__":

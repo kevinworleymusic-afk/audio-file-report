@@ -1,0 +1,66 @@
+import os
+import stat
+import subprocess
+import sys
+import tempfile
+import unittest
+from pathlib import Path
+
+PROG = Path(__file__).resolve().parents[1] / "audio_report.py"
+
+class DiagnosticsTests(unittest.TestCase):
+    def run_cmd(self, args, cwd=None):
+        cmd = [sys.executable, str(PROG)] + args
+        res = subprocess.run(cmd, cwd=cwd or Path.cwd(), capture_output=True, text=True)
+        return res
+
+    def test_missing_file(self):
+        res = self.run_cmd(["missing_file.wav"])
+        self.assertNotEqual(res.returncode, 0)
+        self.assertIn("does not exist", res.stderr)
+
+    def test_empty_file(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "empty.wav"
+            p.write_bytes(b"")
+            res = self.run_cmd([str(p)])
+            self.assertEqual(res.returncode, 4)
+            self.assertIn("empty", res.stderr)
+
+    def test_bad_wav(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "bad.wav"
+            p.write_bytes(b"notawav")
+            res = self.run_cmd([str(p)])
+            self.assertEqual(res.returncode, 6)
+            self.assertIn("unexpected end of file", res.stderr.lower() or res.stderr.lower())
+
+    def test_permission_denied(self):
+        with tempfile.TemporaryDirectory() as td:
+            p = Path(td) / "perm.wav"
+            p.write_bytes(b"data")
+            # remove all permissions
+            p.chmod(0)
+            try:
+                res = self.run_cmd([str(p)])
+                self.assertEqual(res.returncode, 3)
+                self.assertIn("permission denied", res.stderr.lower())
+            finally:
+                # restore so temp dir can be cleaned
+                p.chmod(stat.S_IWUSR | stat.S_IRUSR)
+
+    def test_logfile_startup_header(self):
+        # Uses existing test_audio.wav in repo
+        test_audio = Path(__file__).resolve().parents[1] / "test_audio.wav"
+        if not test_audio.exists():
+            self.skipTest("test_audio.wav not present")
+        with tempfile.TemporaryDirectory() as td:
+            logfile = Path(td) / "debug_test.log"
+            res = self.run_cmd([str(test_audio), "--log-file", str(logfile)])
+            self.assertEqual(res.returncode, 0)
+            text = logfile.read_text()
+            self.assertIn("Program version", text)
+            self.assertIn("matplotlib backend", text)
+
+if __name__ == "__main__":
+    unittest.main()

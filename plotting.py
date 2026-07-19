@@ -91,9 +91,12 @@ def plot_stereo_spectrum(
             )
 
             print(f"Plot saved to: {plot_path.resolve()}")
-
         if plot_mode in ("show", "both"):
-            plt.show()
+            try:
+                plt.show()
+            except Exception:
+                logger = __import__("logging").getLogger(__name__)
+                logger.exception("Failed to show plot interactively")
     finally:
         try:
             plt.close("all")
