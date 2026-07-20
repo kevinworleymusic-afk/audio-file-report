@@ -1,155 +1,178 @@
 # Audio File Report
 
-A Python command-line tool that analyzes WAV-file metadata and produces left/right frequency spectra.
+Current release: 0.2.0
 
-This workspace now organizes the code into small modules for easier maintenance:
+Audio File Report is a Python command-line tool for analyzing WAV files and generating left/right frequency spectrum plots. It reports metadata such as file size, encoding, channel layout, sample rate, bit depth, duration, and bitrate estimates, then optionally saves or displays a spectrum chart.
 
-- `audio_report.py` — thin entrypoint that wires the program
-- `cli.py` — command-line parsing, display detection, and plot-path helpers
-- `fileio.py` — input validation and WAV reading
-- `analysis.py` — FFT and analysis helpers
-- `plotting.py` — plotting and Matplotlib cleanup
+## What the project currently does
 
-## Quickstart
+- Reads and validates WAV files before analysis
+- Reports audio metadata in compact, verbose, or timed formats
+- Generates stereo spectrum plots for the left and right channels
+- Supports interactive display or file-based output
+- Writes detailed diagnostics to a log file when requested
+- Includes conservative validation to detect truncated or corrupted files
 
-Install requirements:
+## Project structure
 
-```bash
-python3 -m pip install numpy matplotlib
-```
+The code is organized into a small set of modules:
 
-Run the help to see options:
+- [audio_report.py](audio_report.py) — main entrypoint that wires the CLI together
+- [cli.py](cli.py) — argument parsing, display detection, and plot path handling
+- [fileio.py](fileio.py) — input validation and WAV reading
+- [analysis.py](analysis.py) — FFT and audio analysis helpers
+- [plotting.py](plotting.py) — plot generation and Matplotlib cleanup
 
-```bash
-python3 audio_report.py -h
-```
+## Requirements
 
-Typical usage (save plot at ~150 DPI):
+- Python 3.9 or newer (Python 3.10+ is recommended)
+- A terminal with network access for installing dependencies
+- The runtime dependencies listed in [requirements.txt](requirements.txt)
 
-```bash
-python3 audio_report.py test_audio.wav --plot save --dpi-choice screen
-```
+Current runtime dependencies:
 
-Show interactively (if a display is available):
+- NumPy for FFT and numerical processing
+- Matplotlib for spectrum plot rendering
 
-```bash
-python3 audio_report.py test_audio.wav --plot show
-```
+## Installation
 
-If your environment is headless (CI or remote), use `--no-prompt` to automatically save instead of prompting:
-
-```bash
-python3 audio_report.py test_audio.wav --plot show --no-prompt
-```
-
-## Important CLI options
-
-- `--plot {show,save,both,none}` — control display vs saving (default: `save`)
-- `--plot-file` — specify filename for saved PNG
-- `--output-dir` — directory to save plot
-- `--overwrite` — allow overwriting existing files; otherwise files are auto-renamed
-- `--dpi` / `--dpi-choice` — set output DPI; presets: `screen` (150), `screen-high` (200), `print` (300)
-- `--debug` — print validation diagnostics
-- `--show` — request an interactive GUI display (overrides default `save`)
-- `--no-prompt` — when no display is detected, do not prompt; save automatically
-
-### Report formatting and metadata
-
-- `--report-format {compact,verbose,timed}` — Choose the textual metadata layout. `compact` prints a true single-line summary for scanning and batch runs. `verbose` prints grouped, human-readable sections. `timed` prints a timing-focused report with minimal metadata and optional per-step timings. If omitted, `--brief` maps to `compact` and `--verbose` maps to `verbose`.
-- `--brief` / `--verbose` / `--quiet` — legacy flags retained for backward compatibility; they map to the same presentation modes when `--report-format` is not supplied.
-
-Metadata reported by the tool (displayed in `compact`, `verbose`, or `timed` view):
-
-- Program version (when available)
-- File name and resolved path (path shown in verbose/debug)
-- File size (bytes and human-friendly KB/MB where appropriate)
-- Encoding description (compression type and human-readable name when present)
-- Channel layout (mono/stereo/multichannel and numeric channel count)
-- Sample rate (Hz)
-- Sample width (bytes) and bit depth (bits)
-- Frame count (formatted with thousands separators)
-- Duration in seconds and as HH:MM:SS
-- Estimated uncompressed bitrate (human-friendly formatting — shown as "<X> kbps" when under 1000 kbps, and as "<Y.YY> Mbps (<X> kbps)" when >= 1000 kbps)
-- Total analysis time (printed in `--verbose` or when `--report-format=verbose`)
-- Per-step timing details in `timed` mode (read, FFT, and plot phases when available)
-
-Notes:
-
-- The `compact` view is a true single-line summary for faster scanning and batch use.
-- The `verbose` view groups related fields (File / Audio Properties / Bitrate / Timing) and includes the full file path and analysis timing information.
-- The `timed` view emphasizes duration and processing performance, including optional read/FFT/plot timings.
-- For automated workflows or CI, consider redirecting output or adding a future `--format json|yaml` option (not yet implemented) for machine-readable output.
-
-## Example outputs
-
-Compact (quick scan):
-
-```
-test_audio.wav | 940.3 KB | stereo | 44100 Hz | 16-bit | 220,500 frames | 5.00 s (00:00:05) | 1.54 Mbps (1536 kbps)
-```
-
-Verbose (grouped details):
-
-```
-AUDIO FILE REPORT
------------------
-Program version: 0.1.0
-
-File
-	Name:        test_audio.wav
-	Path:        /full/path/test_audio.wav
-	Size:        940.3 KB
-	Encoding:    NONE (uncompressed)
-
-Audio Properties
-	Channels:    2 (stereo)
-	Sample rate: 44,100 Hz
-	Sample width: 2 bytes (16-bit)
-	Frames:      220,500
-	Duration:    5.00 seconds (00:00:05)
-
-Bitrate
-	Estimated uncompressed bitrate: 1.54 Mbps (1536 kbps)
-
-Timing
-	Analysis time: 0.34 seconds
-```
-
-Timed (performance-focused):
-
-```
-Audio File Report — 0.1.0
-----------------------------------------
-File: test_audio.wav
-File size: 940,300 bytes
-
-Duration: 5.00 seconds (00:00:05)
-Estimated uncompressed bitrate: 1.54 Mbps (1536 kbps)
-
-Total analysis time: 0.34 seconds
-(Read: 0.05 s, FFT: 0.18 s, Plot: 0.11 s)
-```
-
-## Logging and concise errors
-
-By default the program prints short, user-friendly error messages to the console and writes full diagnostics (DEBUG messages and stack traces) to a log file when requested.
-
-Examples:
+From the project root, create and activate a virtual environment:
 
 ```bash
-# write detailed logs to debug.log, console remains concise
-python3 audio_report.py test_audio.wav --log-file debug.log
-
-# verbose console output + file logging
-python3 audio_report.py test_audio.wav --log-file debug.log --debug
+python3 -m venv .venv
+source .venv/bin/activate
 ```
 
-When reporting an issue, include the `debug.log` file (if you used `--log-file`) so developers can see full tracebacks and internal diagnostics.
+On Windows PowerShell, use:
 
-## Notes
+```powershell
+py -m venv .venv
+.venv\Scripts\Activate.ps1
+```
 
-- The tool currently supports 16-bit stereo PCM WAV files for spectrum analysis.
-- Validation is conservative: the program checks WAV headers, frame counts, and reads frames to ensure files are not truncated or corrupted.
-- The code has been refactored into modules to make it easier to add unit tests and extend functionality.
+Install the dependencies:
 
-If you want, I can add a `requirements.txt`, unit tests for `fileio.py` and `analysis.py`, or convert this into a proper package with `pyproject.toml`.
+```bash
+python -m pip install --upgrade pip
+python -m pip install -r requirements.txt
+```
+
+Verify the installation:
+
+```bash
+python -m pip show numpy matplotlib
+python audio_report.py -h
+```
+
+If the help output appears, the setup is working.
+
+## Quick start
+
+Run the tool on the sample WAV file included in the repository:
+
+```bash
+python audio_report.py test_audio.wav --plot save --dpi-choice screen
+```
+
+This will print a metadata report and save a spectrum plot by default.
+
+## Usage overview
+
+The tool expects one positional argument: the path to a WAV file.
+
+```bash
+python audio_report.py /path/to/your_file.wav
+```
+
+### Plotting options
+
+```bash
+# Show the plot interactively
+python audio_report.py test_audio.wav --plot show
+
+# Save the plot to disk
+python audio_report.py test_audio.wav --plot save
+
+# Show and save the plot
+python audio_report.py test_audio.wav --plot both
+
+# Do not create or show a plot
+python audio_report.py test_audio.wav --plot none
+```
+
+### Output and file naming
+
+```bash
+# Save to a custom file name
+python audio_report.py test_audio.wav --plot save --plot-file spectrum.png
+
+# Save to a specific directory
+python audio_report.py test_audio.wav --plot save --output-dir plots
+
+# Allow overwriting an existing output file
+python audio_report.py test_audio.wav --plot save --overwrite
+```
+
+### Report format options
+
+```bash
+# One-line summary
+python audio_report.py test_audio.wav --brief
+
+# Grouped, detailed report
+python audio_report.py test_audio.wav --verbose
+
+# Quiet mode
+python audio_report.py test_audio.wav --quiet
+```
+
+You can also use the explicit form:
+
+```bash
+python audio_report.py test_audio.wav --report-format compact
+python audio_report.py test_audio.wav --report-format verbose
+python audio_report.py test_audio.wav --report-format timed
+```
+
+### DPI and image quality
+
+```bash
+python audio_report.py test_audio.wav --plot save --dpi 300
+python audio_report.py test_audio.wav --plot save --dpi-choice screen
+python audio_report.py test_audio.wav --plot save --dpi-choice print
+```
+
+### Debugging and logging
+
+```bash
+python audio_report.py test_audio.wav --debug
+python audio_report.py test_audio.wav --log-file debug.log --debug
+```
+
+## Headless environments
+
+If you are running in CI, Docker, or another headless environment, use save mode rather than interactive display:
+
+```bash
+python audio_report.py test_audio.wav --plot save --no-prompt
+```
+
+If Matplotlib backend issues appear, try:
+
+```bash
+MPLBACKEND=Agg python audio_report.py test_audio.wav --plot save
+```
+
+## Notes and limitations
+
+- The tool currently focuses on 16-bit stereo PCM WAV files for spectrum analysis
+- Validation is conservative and checks headers, frame counts, and frame reads
+- The program will auto-rename output files if a target already exists unless `--overwrite` is used
+
+## Documentation
+
+For more detail, see:
+
+- [SETUP.md](SETUP.md) — installation and environment setup
+- [USER_MANUAL.md](USER_MANUAL.md) — full CLI usage guide
+- [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) — development roadmap and planned features

@@ -5,6 +5,31 @@ import sys
 import os
 import platform
 
+
+def _ensure_runtime_dependencies() -> None:
+    """Ensure required runtime dependencies are available before proceeding."""
+    missing = []
+
+    for module_name in ("numpy", "matplotlib"):
+        try:
+            __import__(module_name)
+        except Exception:
+            missing.append(module_name)
+
+    if missing:
+        missing_list = ", ".join(missing)
+        raise RuntimeError(
+            "Missing required dependency(s): "
+            f"{missing_list}. Install them with: python -m pip install -r requirements.txt"
+        )
+
+
+try:
+    _ensure_runtime_dependencies()
+except RuntimeError as exc:
+    print(f"Error: {exc}", file=sys.stderr)
+    sys.exit(1)
+
 from cli import parse_arguments, display_available, get_final_plot_path
 from fileio import validate_input_path, validate_wav_file, read_wav_file
 from analysis import (

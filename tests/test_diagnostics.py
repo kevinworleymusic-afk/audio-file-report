@@ -49,6 +49,35 @@ class DiagnosticsTests(unittest.TestCase):
                 # restore so temp dir can be cleaned
                 p.chmod(stat.S_IWUSR | stat.S_IRUSR)
 
+    def test_missing_runtime_dependencies_message(self):
+        env = os.environ.copy()
+        env.pop("PYTHONPATH", None)
+        env["PYTHONPATH"] = str(Path(__file__).resolve().parents[1])
+
+        with tempfile.TemporaryDirectory() as td:
+            fake_site = Path(td) / "sitecustomize.py"
+            fake_site.write_text(
+                "import builtins\n"
+                "import importlib\n"
+                "_original_import = builtins.__import__\n"
+                "def _fake_import(name, *args, **kwargs):\n"
+                "    if name in {'numpy', 'matplotlib'}:\n"
+                "        raise ImportError(name)\n"
+                "    return _original_import(name, *args, **kwargs)\n"
+                "builtins.__import__ = _fake_import\n"
+            )
+            env["PYTHONPATH"] = f"{td}:{env['PYTHONPATH']}"
+            res = subprocess.run(
+                [sys.executable, str(PROG), "--version"],
+                cwd=Path.cwd(),
+                capture_output=True,
+                text=True,
+                env=env,
+            )
+            self.assertNotEqual(res.returncode, 0)
+            self.assertIn("Missing required dependency", res.stderr)
+            self.assertIn("python -m pip install -r requirements.txt", res.stderr)
+
     def test_logfile_startup_header(self):
         # Uses existing test_audio.wav in repo
         test_audio = Path(__file__).resolve().parents[1] / "test_audio.wav"

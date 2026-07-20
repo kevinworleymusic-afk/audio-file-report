@@ -1,0 +1,6 @@
+# Runtime dependencies for audio-file-report
+# NumPy is used for FFT and numerical analysis.
+numpy>=1.24,<3.0
+
+# Matplotlib is used to render the stereo spectrum plots.
+matplotlib>=3.7,<4.0

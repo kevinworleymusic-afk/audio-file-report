@@ -2,7 +2,7 @@
 
 Audio File Report is developing from a basic stereo WAV inspector into an explainable stereo-analysis and quality-control tool.
 
-This roadmap gives an approachable overview of the planned releases. The full technical checklists, validation requirements, and implementation notes are available in the [Detailed Development Plan](docs/DEVELOPMENT_PLAN.md).
+This roadmap gives an approachable overview of the planned releases. The current documented release is 0.2.0, and the full technical checklists, validation requirements, and implementation notes are available in the [Detailed Development Plan](docs/DEVELOPMENT_PLAN.md).
 
 The roadmap is a working plan. Features may move between releases as the project develops and technical dependencies become clearer.
 
@@ -27,7 +27,7 @@ Across the releases, the project aims to differentiate through:
 
 See [Product Differentiation](docs/PRODUCT_DIFFERENTIATION.md) for the full strategy.
 
-## 0.1.0 — Initial Stereo Analyzer
+## 0.2.0 — Initial Stereo Analyzer
 
 Status: **Complete**
 

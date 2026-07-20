@@ -4,7 +4,7 @@ This document contains the detailed technical checklist for developing Audio Fil
 
 For an approachable release overview, see [`ROADMAP.md`](../ROADMAP.md). For the product-level rationale behind the differentiators, see [`PRODUCT_DIFFERENTIATION.md`](PRODUCT_DIFFERENTIATION.md). This detailed plan is a working document rather than a fixed promise. Features may move between releases as the project develops and technical dependencies become clearer.
 
-## Current Version: 0.1.0 
+## Current Version: 0.2.0
 
 Current capabilities:
 
@@ -127,26 +127,30 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 
 ### Project Setup and Documentation
 
-- [ ] Add `requirements.txt`
-- [ ] Provide actionable missing-dependency messages
-- [ ] Document supported Python versions
-- [ ] Update README installation instructions
-- [ ] Document all version 0.2.0 command-line options
-- [ ] Add normal, brief, verbose, and debug examples
-- [ ] Update `__version__` to `0.2.0` only when the release is complete
+- [x] Add `requirements.txt`
+- [x] Add dedicated setup documentation in `SETUP.md`
+- [x] Add dedicated user documentation in `USER_MANUAL.md`
+- [x] Provide actionable missing-dependency messages
+- [x] Document supported Python versions in the README and setup guide
+- [x] Update README installation instructions with current requirements, setup steps, quick-start usage, CLI overview, and documentation links
+- [x] Document all version 0.2.0 command-line options in the user manual and group them by version
+- [x] Add normal, brief, verbose, and debug examples to the setup and user documentation
+- [x] Update `__version__` to `0.2.0` now that the 0.2.0 release work is complete
 
 Updates made in this workspace (refactor & docs):
 
 - [x] Update README installation instructions and usage examples (basic CLI and flags documented)
-- [x] Split code into modules: `cli.py`, `fileio.py`, `analysis.py`, `plotting.py` and a thin `audio_report.py` entrypoint
-- [x] Documented main CLI behaviors: `--plot`, `--plot-file`, `--output-dir`, `--overwrite`, `--dpi`, `--dpi-choice`, `--debug`, `--show`, `--no-prompt`
- - [x] Added `--log-file` support and logging configuration in `audio_report.py`
- - [x] Cleaned `fileio.py` to use module-level `logger`, concise stderr messages, and `logger.exception()` for diagnostics
- - [x] Added README snippet documenting logging behavior and examples for `--log-file` and `--debug`
- - [x] Logged program/version, Python, OS, and dependency versions to `--log-file` (startup header)
- - [x] Logged active command-line options and resolved paths in debug logs
- - [x] Logged active command-line options and resolved paths in debug logs
- - [x] Include HH:MM:SS duration in debug logs and human report
+- [x] Add dedicated setup and user documentation files: `SETUP.md` and `USER_MANUAL.md`
+- [x] Include output-mode examples for normal, brief, and verbose usage in the setup and user documentation
+- [x] Add a simple visual diagram showing the different output modes in the setup guide
+- [x] Split code into modules: `cli.py`, `fileio.py`, `analysis.py`, `plotting.py`, and a thin `audio_report.py` entrypoint
+- [x] Document main CLI behaviors: `--plot`, `--plot-file`, `--output-dir`, `--overwrite`, `--dpi`, `--dpi-choice`, `--debug`, `--show`, and `--no-prompt`
+- [x] Add `--log-file` support and logging configuration in `audio_report.py`
+- [x] Clean `fileio.py` to use module-level `logger`, concise stderr messages, and `logger.exception()` for diagnostics
+- [x] Add README documentation for logging behavior and examples using `--log-file` and `--debug`
+- [x] Log program/version, Python, OS, and dependency versions to `--log-file` (startup header)
+- [x] Log active command-line options and resolved paths in debug logs
+- [x] Include HH:MM:SS duration in debug logs and human-readable reports
 
 ## Version 0.3.0 — Level and Dynamics Measurements
 
