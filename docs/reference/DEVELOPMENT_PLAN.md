@@ -2,7 +2,7 @@
 
 This document contains the detailed technical checklist for developing Audio File Report from a basic stereo WAV analyzer into a tested audio-analysis and quality-control tool.
 
-For an approachable release overview, see [`ROADMAP.md`](../ROADMAP.md). For the product-level rationale behind the differentiators, see [`PRODUCT_DIFFERENTIATION.md`](PRODUCT_DIFFERENTIATION.md). This detailed plan is a working document rather than a fixed promise. Features may move between releases as the project develops and technical dependencies become clearer.
+For an approachable release overview, see [`ROADMAP.md`](ROADMAP.md). For the product-level rationale behind the differentiators, see [`PRODUCT_DIFFERENTIATION.md`](../product/PRODUCT_DIFFERENTIATION.md). This detailed plan is a working document rather than a fixed promise. Features may move between releases as the project develops and technical dependencies become clearer.
 
 ## Current Version: 0.2.0
 
@@ -65,15 +65,15 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Add `--plot-file` to select the output filename
 - [x] Add `--output-dir` to select an output folder
 - [x] Generate a readable default PNG filename
-- [x] Generate a Save Function
+- [x] Generate a save function
 - [x] Confirm where saved plots are located
 - [x] Prevent accidental file overwriting
 - [x] Add `--overwrite` to permit intentional replacement
-- [x] Save graphs at a useful resolution, set choice between 300 DPI, 200 DPI, and 150 DPI.
+- [x] Save graphs at a useful resolution with 300 DPI, 200 DPI, and 150 DPI choices
 - [x] Close Matplotlib cleanly
 - [x] Detect when a graphical display is unavailable
- - [x] Added an interactive prompt when no display is available.
- - [x] Add `--no-prompt` to skip the prompt and proceed to save
+	- [x] Add an interactive prompt when no display is available
+	- [x] Add `--no-prompt` to skip the prompt and proceed to save
 
 ### File Validation
 
@@ -104,26 +104,26 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Provide actionable suggestions for correctable errors
 - [x] Use clear operating-system exit codes (distinct codes for missing/permission/empty)
 
-
 ### Improved Metadata
- - [x] Display the program version
- - [x] Display file size
- - [x] Display the encoding type
- - [x] Describe channel layout as mono, stereo, or multichannel
- - [x] Format sample rate clearly
- - [x] Display sample width in bytes
- - [x] Display bit depth in bits
- - [x] Format frame count clearly
- - [x] Display duration in seconds
- - [x] Display duration as `HH:MM:SS`
- - [x] Display estimated uncompressed bitrate
- 	- Note: format bitrate for readability — show as "<X> kbps" when under 1000 kbps, and as "<Y.YY> Mbps (<X> kbps)" when >= 1000 kbps.
- - [x] Add `--report-format` option to select `compact`, `verbose`, or `timed` metadata layouts (maps from `--brief`/`--verbose` when not explicitly provided)
- - [x] Display compact metadata as a single-line summary
- - [x] Display verbose metadata in grouped sections
- - [x] Display timing-focused metadata in `timed` mode, including per-step read/FFT/plot timings
- - [x] Add `--brief` / `--verbose` compatibility mapping for report-format
- - [x] Display total analysis time in verbose mode
+
+- [x] Display the program version
+- [x] Display file size
+- [x] Display the encoding type
+- [x] Describe channel layout as mono, stereo, or multichannel
+- [x] Format sample rate clearly
+- [x] Display sample width in bytes
+- [x] Display bit depth in bits
+- [x] Format frame count clearly
+- [x] Display duration in seconds
+- [x] Display duration as `HH:MM:SS`
+- [x] Display estimated uncompressed bitrate
+  - Note: format bitrate for readability - show as "<X> kbps" when under 1000 kbps, and as "<Y.YY> Mbps (<X> kbps)" when >= 1000 kbps.
+- [x] Add `--report-format` option to select `compact`, `verbose`, or `timed` metadata layouts (maps from `--brief`/`--verbose` when not explicitly provided)
+- [x] Display compact metadata as a single-line summary
+- [x] Display verbose metadata in grouped sections
+- [x] Display timing-focused metadata in `timed` mode, including per-step read/FFT/plot timings
+- [x] Add `--brief` / `--verbose` compatibility mapping for report-format
+- [x] Display total analysis time in verbose mode
 
 ### Project Setup and Documentation
 

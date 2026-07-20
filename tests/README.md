@@ -2,7 +2,7 @@ Running diagnostics tests
 
 Prerequisites
 
-- Python 3.8+ (the repo was tested with 3.14)
+- Python 3.9+ (the repo was tested with 3.14)
 - NumPy and Matplotlib are optional for some tests; most diagnostic tests exercise validation logic only.
 
 Run the test module

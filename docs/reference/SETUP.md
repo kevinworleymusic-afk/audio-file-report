@@ -1,6 +1,6 @@
 # Setup Guide
 
-This project is a small Python CLI for analyzing WAV files and generating spectrum plots. The runtime dependencies are intentionally lightweight:
+This project is a small Python command-line tool for analyzing WAV files and generating spectrum plots. The runtime dependencies are intentionally lightweight:
 
 - NumPy for FFT and numerical processing
 - Matplotlib for rendering plots
@@ -56,6 +56,16 @@ python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice scre
 
 This analyzes the WAV file, prints a metadata report, and saves a spectrum plot by default.
 
+### Full option list (0.2.0)
+
+All currently available options:
+
+- Positional: `audio_file`
+- Flags: `--version`, `--brief`, `--verbose`, `--quiet`, `--overwrite`, `--debug`, `--show`, `--no-prompt`
+- Value options: `--plot {show,save,both,none}`, `--plot-file PATH`, `--output-dir PATH`, `--dpi INT`, `--dpi-choice {screen,screen-high,print}`, `--report-format {compact,verbose,timed}`, `--log-file PATH`
+
+Parser note: `--brief`, `--verbose`, `--quiet`, `--plot`, `--plot-file`, and `--output-dir` are currently mutually exclusive.
+
 ### Example output modes
 
 Here are the three common report styles you can choose from:
@@ -86,7 +96,7 @@ python audio_report.py assets/audio/test_audio.wav --verbose
 
 The brief mode is useful for scanning lots of files quickly, while the verbose mode is better when you want more details about the file and analysis.
 
-For a fuller guide to the available commands and usage patterns, see [USER_MANUAL.md](USER_MANUAL.md).
+For the complete command matrix, valid option combinations, and full examples, see [USER_MANUAL.md](USER_MANUAL.md).
 
 ## 5. Headless and plotting notes
 

@@ -87,36 +87,7 @@ The tool expects one positional argument: the path to a WAV file.
 python audio_report.py /path/to/your_file.wav
 ```
 
-### Plotting options
-
-```bash
-# Show the plot interactively
-python audio_report.py assets/audio/test_audio.wav --plot show
-
-# Save the plot to disk
-python audio_report.py assets/audio/test_audio.wav --plot save
-
-# Show and save the plot
-python audio_report.py assets/audio/test_audio.wav --plot both
-
-# Do not create or show a plot
-python audio_report.py assets/audio/test_audio.wav --plot none
-```
-
-### Output and file naming
-
-```bash
-# Save to a custom file name
-python audio_report.py assets/audio/test_audio.wav --plot save --plot-file spectrum.png
-
-# Save to a specific directory
-python audio_report.py assets/audio/test_audio.wav --plot save --output-dir plots
-
-# Allow overwriting an existing output file
-python audio_report.py assets/audio/test_audio.wav --plot save --overwrite
-```
-
-### Report format options
+### Common commands
 
 ```bash
 # One-line summary
@@ -125,32 +96,14 @@ python audio_report.py assets/audio/test_audio.wav --brief
 # Grouped, detailed report
 python audio_report.py assets/audio/test_audio.wav --verbose
 
-# Quiet mode
-python audio_report.py assets/audio/test_audio.wav --quiet
-```
+# Save a plot to a specific file (save mode is implied)
+python audio_report.py assets/audio/test_audio.wav --plot-file spectrum.png
 
-You can also use the explicit form:
-
-```bash
-python audio_report.py assets/audio/test_audio.wav --report-format compact
-python audio_report.py assets/audio/test_audio.wav --report-format verbose
-python audio_report.py assets/audio/test_audio.wav --report-format timed
-```
-
-### DPI and image quality
-
-```bash
-python audio_report.py assets/audio/test_audio.wav --plot save --dpi 300
-python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice screen
-python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice print
-```
-
-### Debugging and logging
-
-```bash
-python audio_report.py assets/audio/test_audio.wav --debug
+# Write diagnostics to a log file
 python audio_report.py assets/audio/test_audio.wav --log-file debug.log --debug
 ```
+
+For the complete option list and all valid command combinations, see [docs/reference/USER_MANUAL.md](docs/reference/USER_MANUAL.md).
 
 ## Headless environments
 
