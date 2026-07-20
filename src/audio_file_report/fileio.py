@@ -4,7 +4,7 @@ import logging
 from pathlib import Path
 import wave
 
-from common import (
+from .common import (
     EXIT_NOT_FOUND,
     EXIT_PERMISSION,
     EXIT_EMPTY,

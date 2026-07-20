@@ -7,7 +7,7 @@ from typing import Optional
 import matplotlib as mpl
 import matplotlib.pyplot as plt
 
-from common import __version__
+from .common import __version__
 
 
 def parse_arguments():

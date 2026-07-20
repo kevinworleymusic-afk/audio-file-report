@@ -51,7 +51,7 @@ If the help output appears, the installation was successful.
 Basic usage:
 
 ```bash
-python audio_report.py test_audio.wav --plot save --dpi-choice screen
+python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice screen
 ```
 
 This analyzes the WAV file, prints a metadata report, and saves a spectrum plot by default.
@@ -63,25 +63,25 @@ Here are the three common report styles you can choose from:
 ```text
 Normal mode  -> standard report with core metadata
    │
-   ├─ python audio_report.py test_audio.wav
+   ├─ python audio_report.py assets/audio/test_audio.wav
    │
 Brief mode   -> one-line summary for quick scanning
    │
-   └─ python audio_report.py test_audio.wav --brief
+   └─ python audio_report.py assets/audio/test_audio.wav --brief
 
 Verbose mode -> detailed grouped report with more context
-   └─ python audio_report.py test_audio.wav --verbose
+   └─ python audio_report.py assets/audio/test_audio.wav --verbose
 ```
 
 ```bash
 # Default / normal output
-python audio_report.py test_audio.wav
+python audio_report.py assets/audio/test_audio.wav
 
 # Brief one-line summary
-python audio_report.py test_audio.wav --brief
+python audio_report.py assets/audio/test_audio.wav --brief
 
 # Verbose grouped report
-python audio_report.py test_audio.wav --verbose
+python audio_report.py assets/audio/test_audio.wav --verbose
 ```
 
 The brief mode is useful for scanning lots of files quickly, while the verbose mode is better when you want more details about the file and analysis.
@@ -93,7 +93,7 @@ For a fuller guide to the available commands and usage patterns, see [USER_MANUA
 Matplotlib can behave differently in headless environments. If you hit backend-related issues, use:
 
 ```bash
-MPLBACKEND=Agg python audio_report.py test_audio.wav --plot save
+MPLBACKEND=Agg python audio_report.py assets/audio/test_audio.wav --plot save
 ```
 
 This is especially useful on remote servers, Docker containers, or CI systems.
@@ -107,7 +107,7 @@ This is especially useful on remote servers, Docker containers, or CI systems.
 - For full diagnostics, run the tool with logging enabled:
 
 ```bash
-python audio_report.py test_audio.wav --log-file debug.log --debug
+python audio_report.py assets/audio/test_audio.wav --log-file debug.log --debug
 ```
 
 ## 7. Recommended workflow

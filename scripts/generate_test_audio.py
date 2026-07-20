@@ -6,7 +6,7 @@ import wave
 from pathlib import Path
 
 
-OUTPUT_FILE = Path("test_audio.wav")
+OUTPUT_FILE = Path("assets/audio/test_audio.wav")
 SAMPLE_RATE = 48000
 DURATION_SECONDS = 5
 AMPLITUDE = 0.5

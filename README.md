@@ -15,13 +15,16 @@ Audio File Report is a Python command-line tool for analyzing WAV files and gene
 
 ## Project structure
 
-The code is organized into a small set of modules:
+The repository is organized by purpose:
 
-- [audio_report.py](audio_report.py) — main entrypoint that wires the CLI together
-- [cli.py](cli.py) — argument parsing, display detection, and plot path handling
-- [fileio.py](fileio.py) — input validation and WAV reading
-- [analysis.py](analysis.py) — FFT and audio analysis helpers
-- [plotting.py](plotting.py) — plot generation and Matplotlib cleanup
+- [audio_report.py](audio_report.py) — compatibility entrypoint for running from repo root
+- [src/audio_file_report/](src/audio_file_report) — application package
+- [scripts/generate_test_audio.py](scripts/generate_test_audio.py) — test-audio generator utility
+- [assets/audio/](assets/audio) — sample WAV inputs
+- [assets/plots/](assets/plots) — sample generated plots
+- [docs/reference/](docs/reference) — setup, user manual, roadmap, and development plan
+- [docs/product/](docs/product) — product differentiation notes
+- [tests/](tests) — diagnostics tests
 
 ## Requirements
 
@@ -71,7 +74,7 @@ If the help output appears, the setup is working.
 Run the tool on the sample WAV file included in the repository:
 
 ```bash
-python audio_report.py test_audio.wav --plot save --dpi-choice screen
+python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice screen
 ```
 
 This will print a metadata report and save a spectrum plot by default.
@@ -88,65 +91,65 @@ python audio_report.py /path/to/your_file.wav
 
 ```bash
 # Show the plot interactively
-python audio_report.py test_audio.wav --plot show
+python audio_report.py assets/audio/test_audio.wav --plot show
 
 # Save the plot to disk
-python audio_report.py test_audio.wav --plot save
+python audio_report.py assets/audio/test_audio.wav --plot save
 
 # Show and save the plot
-python audio_report.py test_audio.wav --plot both
+python audio_report.py assets/audio/test_audio.wav --plot both
 
 # Do not create or show a plot
-python audio_report.py test_audio.wav --plot none
+python audio_report.py assets/audio/test_audio.wav --plot none
 ```
 
 ### Output and file naming
 
 ```bash
 # Save to a custom file name
-python audio_report.py test_audio.wav --plot save --plot-file spectrum.png
+python audio_report.py assets/audio/test_audio.wav --plot save --plot-file spectrum.png
 
 # Save to a specific directory
-python audio_report.py test_audio.wav --plot save --output-dir plots
+python audio_report.py assets/audio/test_audio.wav --plot save --output-dir plots
 
 # Allow overwriting an existing output file
-python audio_report.py test_audio.wav --plot save --overwrite
+python audio_report.py assets/audio/test_audio.wav --plot save --overwrite
 ```
 
 ### Report format options
 
 ```bash
 # One-line summary
-python audio_report.py test_audio.wav --brief
+python audio_report.py assets/audio/test_audio.wav --brief
 
 # Grouped, detailed report
-python audio_report.py test_audio.wav --verbose
+python audio_report.py assets/audio/test_audio.wav --verbose
 
 # Quiet mode
-python audio_report.py test_audio.wav --quiet
+python audio_report.py assets/audio/test_audio.wav --quiet
 ```
 
 You can also use the explicit form:
 
 ```bash
-python audio_report.py test_audio.wav --report-format compact
-python audio_report.py test_audio.wav --report-format verbose
-python audio_report.py test_audio.wav --report-format timed
+python audio_report.py assets/audio/test_audio.wav --report-format compact
+python audio_report.py assets/audio/test_audio.wav --report-format verbose
+python audio_report.py assets/audio/test_audio.wav --report-format timed
 ```
 
 ### DPI and image quality
 
 ```bash
-python audio_report.py test_audio.wav --plot save --dpi 300
-python audio_report.py test_audio.wav --plot save --dpi-choice screen
-python audio_report.py test_audio.wav --plot save --dpi-choice print
+python audio_report.py assets/audio/test_audio.wav --plot save --dpi 300
+python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice screen
+python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice print
 ```
 
 ### Debugging and logging
 
 ```bash
-python audio_report.py test_audio.wav --debug
-python audio_report.py test_audio.wav --log-file debug.log --debug
+python audio_report.py assets/audio/test_audio.wav --debug
+python audio_report.py assets/audio/test_audio.wav --log-file debug.log --debug
 ```
 
 ## Headless environments
@@ -154,13 +157,13 @@ python audio_report.py test_audio.wav --log-file debug.log --debug
 If you are running in CI, Docker, or another headless environment, use save mode rather than interactive display:
 
 ```bash
-python audio_report.py test_audio.wav --plot save --no-prompt
+python audio_report.py assets/audio/test_audio.wav --plot save --no-prompt
 ```
 
 If Matplotlib backend issues appear, try:
 
 ```bash
-MPLBACKEND=Agg python audio_report.py test_audio.wav --plot save
+MPLBACKEND=Agg python audio_report.py assets/audio/test_audio.wav --plot save
 ```
 
 ## Notes and limitations
@@ -173,6 +176,6 @@ MPLBACKEND=Agg python audio_report.py test_audio.wav --plot save
 
 For more detail, see:
 
-- [SETUP.md](SETUP.md) — installation and environment setup
-- [USER_MANUAL.md](USER_MANUAL.md) — full CLI usage guide
-- [DEVELOPMENT_PLAN.md](DEVELOPMENT_PLAN.md) — development roadmap and planned features
+- [docs/reference/SETUP.md](docs/reference/SETUP.md) — installation and environment setup
+- [docs/reference/USER_MANUAL.md](docs/reference/USER_MANUAL.md) — full CLI usage guide
+- [docs/reference/DEVELOPMENT_PLAN.md](docs/reference/DEVELOPMENT_PLAN.md) — development roadmap and planned features

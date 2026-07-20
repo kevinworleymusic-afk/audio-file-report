@@ -79,10 +79,10 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertIn("python -m pip install -r requirements.txt", res.stderr)
 
     def test_logfile_startup_header(self):
-        # Uses existing test_audio.wav in repo
-        test_audio = Path(__file__).resolve().parents[1] / "test_audio.wav"
+        # Uses existing test audio asset in repo
+        test_audio = Path(__file__).resolve().parents[1] / "assets" / "audio" / "test_audio.wav"
         if not test_audio.exists():
-            self.skipTest("test_audio.wav not present")
+            self.skipTest("assets/audio/test_audio.wav not present")
         with tempfile.TemporaryDirectory() as td:
             logfile = Path(td) / "debug_test.log"
             res = self.run_cmd([str(test_audio), "--log-file", str(logfile)])
@@ -92,9 +92,9 @@ class DiagnosticsTests(unittest.TestCase):
             self.assertIn("matplotlib backend", text)
 
     def test_metadata_in_log(self):
-        test_audio = Path(__file__).resolve().parents[1] / "test_audio.wav"
+        test_audio = Path(__file__).resolve().parents[1] / "assets" / "audio" / "test_audio.wav"
         if not test_audio.exists():
-            self.skipTest("test_audio.wav not present")
+            self.skipTest("assets/audio/test_audio.wav not present")
         with tempfile.TemporaryDirectory() as td:
             logfile = Path(td) / "debug_meta.log"
             res = self.run_cmd([str(test_audio), "--log-file", str(logfile)])
