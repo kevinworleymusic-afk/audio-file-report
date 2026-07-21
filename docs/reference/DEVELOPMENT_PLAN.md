@@ -262,24 +262,24 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 
 ### DC and Waveform-Center Measurements
 
-- [ ] Calculate mean sample value
-- [ ] Calculate DC offset in normalized amplitude
-- [ ] Calculate DC offset as a percentage
-- [ ] Calculate DC offset over time
-- [ ] Report maximum short-term DC offset
-- [ ] Identify time ranges with unusual DC offset
-- [ ] Compare positive and negative sample counts
+- [x] Calculate mean sample value
+- [x] Calculate DC offset in normalized amplitude
+- [x] Calculate DC offset as a percentage
+- [x] Calculate DC offset over time
+- [x] Report maximum short-term DC offset
+- [x] Identify time ranges with unusual DC offset
+- [x] Compare positive and negative sample counts
 
 ### Gain and Normalization Information
 
-- [ ] Calculate gain required to reach a selected sample-peak target
-- [ ] Preview the resulting sample peak after gain adjustment
-- [ ] Warn if requested gain would clip
-- [ ] Add a default sample-peak target such as -1 dBFS
-- [ ] Allow a custom sample-peak target
-- [ ] Report gain independently for each channel
-- [ ] Report linked stereo gain based on the higher channel peak
-- [ ] Keep normalization as a calculation preview without modifying the source file
+- [x] Calculate gain required to reach a selected sample-peak target
+- [x] Preview the resulting sample peak after gain adjustment
+- [x] Warn if requested gain would clip
+- [x] Add a default sample-peak target such as -1 dBFS
+- [x] Allow a custom sample-peak target
+- [x] Report gain independently for each channel
+- [x] Report linked stereo gain based on the higher channel peak
+- [x] Keep normalization as a calculation preview without modifying the source file
 
 ### Left/Right Level Comparison
 
@@ -329,9 +329,11 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 - [x] Validate the 0.3.0 level-metric test module with `python3 -m unittest`
 - [x] Add script-contract tests for Fundamental Amplitude (field/schema and peak-time checks) (`tests/test_v030_fundamental_amplitude_script.py`)
 - [x] Add script-contract tests for Clipping/Limiting indicators (field/schema and clipping-count behavior) (`tests/test_v030_clipping_limiting_indicators_script.py`)
+- [x] Add script-contract tests for DC/Waveform-Center measurements (field/schema and unusual-range detection behavior) (`tests/test_v030_dc_waveform_center_measurements_script.py`)
 - [x] Add script-contract tests for RMS/Crest Factor (field/schema and window-configuration behavior) (`tests/test_v030_rms_crest_factor_script.py`)
 - [x] Add script-contract tests for Silence/Dropout analysis (field/schema and leading/trailing/dropout behavior) (`tests/test_v030_silence_dropout_analysis_script.py`)
 - [x] Add script-contract tests for Dynamic Envelope (field/schema, large-change detection, sustained-region detection) (`tests/test_v030_dynamic_envelope_script.py`)
+- [x] Add script-contract tests for Gain/Normalization information (field/schema and custom-target clipping-warning behavior) (`tests/test_v030_gain_normalization_information_script.py`)
 - [x] Add script-contract tests for Level Distribution (default/custom thresholds, crossing counts, and distribution outputs) (`tests/test_v030_level_distribution_script.py`)
 - [x] Add analytical truth-fixture regressions for peak, RMS, crest factor, headroom, and gain-preview math (`tests/test_v030_regression_validation_track.py`)
 - [x] Add threshold-boundary regressions for representative dBFS cutoffs (`tests/test_v030_regression_validation_track.py`)

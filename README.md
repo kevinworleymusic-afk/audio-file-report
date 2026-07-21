@@ -129,7 +129,9 @@ python3 -m unittest \
 python3 -m unittest \
 	tests/test_v030_fundamental_amplitude_script.py \
 	tests/test_v030_clipping_limiting_indicators_script.py \
+	tests/test_v030_dc_waveform_center_measurements_script.py \
 	tests/test_v030_dynamic_envelope_script.py \
+	tests/test_v030_gain_normalization_information_script.py \
 	tests/test_v030_level_distribution_script.py \
 	tests/test_v030_rms_crest_factor_script.py \
 	tests/test_v030_silence_dropout_analysis_script.py \
@@ -149,7 +151,9 @@ python3 -m unittest \
 	tests/test_error_code_regressions.py \
 	tests/test_v030_fundamental_amplitude_script.py \
 	tests/test_v030_clipping_limiting_indicators_script.py \
+	tests/test_v030_dc_waveform_center_measurements_script.py \
 	tests/test_v030_dynamic_envelope_script.py \
+	tests/test_v030_gain_normalization_information_script.py \
 	tests/test_v030_level_distribution_script.py \
 	tests/test_v030_rms_crest_factor_script.py \
 	tests/test_v030_silence_dropout_analysis_script.py \
@@ -173,7 +177,7 @@ Implementation is organized by roadmap workstream under [src/audio_file_report/]
 
 Compatibility modules remain at top level (for example [src/audio_file_report/app.py](src/audio_file_report/app.py), [src/audio_file_report/cli.py](src/audio_file_report/cli.py)) and forward to the active implementation so existing imports continue to work.
 
-Version-aligned script entrypoints are available in [scripts/](scripts), such as [scripts/run_020_reliable_cli_file_handling.py](scripts/run_020_reliable_cli_file_handling.py) and [scripts/run_040_spectral_analysis.py](scripts/run_040_spectral_analysis.py). These wrappers forward arguments to [audio_report.py](audio_report.py).
+Version-aligned script entrypoints are available in [scripts/](scripts), such as [scripts/run_020/run_020_reliable_cli_file_handling.py](scripts/run_020/run_020_reliable_cli_file_handling.py), [scripts/run_030/run_030_levels_dynamics.py](scripts/run_030/run_030_levels_dynamics.py), and [scripts/run_040_spectral_analysis.py](scripts/run_040_spectral_analysis.py). These wrappers forward arguments to [audio_report.py](audio_report.py).
 
 ## Headless environments
 

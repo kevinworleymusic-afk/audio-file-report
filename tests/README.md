@@ -25,7 +25,9 @@ python3 -m unittest \
 python3 -m unittest \
 	tests/test_v030_fundamental_amplitude_script.py \
 	tests/test_v030_clipping_limiting_indicators_script.py \
+	tests/test_v030_dc_waveform_center_measurements_script.py \
 	tests/test_v030_dynamic_envelope_script.py \
+	tests/test_v030_gain_normalization_information_script.py \
 	tests/test_v030_level_distribution_script.py \
 	tests/test_v030_rms_crest_factor_script.py \
 	tests/test_v030_silence_dropout_analysis_script.py \
@@ -93,6 +95,18 @@ Run 0.3.0 clipping/limiting script tests:
 
 ```bash
 python3 -m unittest tests/test_v030_clipping_limiting_indicators_script.py -v
+```
+
+Run 0.3.0 DC/waveform-center script tests:
+
+```bash
+python3 -m unittest tests/test_v030_dc_waveform_center_measurements_script.py -v
+```
+
+Run 0.3.0 gain/normalization script tests:
+
+```bash
+python3 -m unittest tests/test_v030_gain_normalization_information_script.py -v
 ```
 
 Run 0.3.0 silence/dropout script tests:
