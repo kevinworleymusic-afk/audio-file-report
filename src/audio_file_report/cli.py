@@ -50,20 +50,20 @@ def parse_arguments():
         help="Suppress normal report output.",
     )
 
-    display_group.add_argument(
+    parser.add_argument(
         "--plot",
         choices=["show", "save", "both", "none"],
         default="save",
         help="Display or save the frequency spectrum plot.",
     )
 
-    display_group.add_argument(
+    parser.add_argument(
         "--plot-file",
         type=Path,
         help="Create file name for saved file.",
     )
 
-    display_group.add_argument(
+    parser.add_argument(
         "--output-dir",
         type=Path,
         help="Setting Folder Directory to save the file.",
@@ -176,14 +176,15 @@ def get_final_plot_path(audio_path: Path, args) -> Optional[Path]:
         return None
 
     if args.plot_file is None:
-        plot_filename = Path(create_default_plot_filename(audio_path))
+        output_dir = args.output_dir or Path('.')
+        plot_path = output_dir / create_default_plot_filename(audio_path)
     else:
-        plot_filename = Path(args.plot_file)
+        plot_path = Path(args.plot_file).expanduser()
+        # If --plot-file is a bare filename and --output-dir is provided, combine them.
+        if args.output_dir is not None and plot_path.parent == Path('.'):
+            plot_path = Path(args.output_dir) / plot_path
 
-    output_dir = args.output_dir or Path('.')
-    output_dir.mkdir(parents=True, exist_ok=True)
-
-    plot_path = output_dir / plot_filename
+    plot_path.parent.mkdir(parents=True, exist_ok=True)
 
     if not args.overwrite:
         final_plot_path = plot_path

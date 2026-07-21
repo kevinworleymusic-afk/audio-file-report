@@ -13,6 +13,12 @@ From the repository root:
 python3 -m unittest tests/test_diagnostics.py -v
 ```
 
+Run regression tests for CLI/plotting fixes:
+
+```bash
+python3 -m unittest tests/test_cli_plotting_regressions.py -v
+```
+
 Or run the test module directly:
 
 ```bash

@@ -201,8 +201,6 @@ def main():
                     args.plot = "save"
                 else:
                     print("Aborting: graphical display required for '--plot show'.")
-                    import sys
-
                     sys.exit(0)
     audio_path = args.audio_file
 
