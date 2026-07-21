@@ -20,6 +20,7 @@ class LevelMetrics:
     max_sample: float
     positive_peak: float
     negative_peak: float
+    positive_negative_peak_asymmetry: float
     peak_sample_index: int
     peak_time_seconds: float
     rms_linear: float
@@ -130,6 +131,7 @@ def compute_level_metrics(
         max_sample=max_sample,
         positive_peak=max_sample,
         negative_peak=min_sample,
+        positive_negative_peak_asymmetry=float(abs(max_sample) - abs(min_sample)),
         peak_sample_index=peak_index,
         peak_time_seconds=float(peak_index / sample_rate),
         rms_linear=rms_linear,

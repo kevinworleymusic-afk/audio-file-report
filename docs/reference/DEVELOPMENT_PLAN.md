@@ -176,30 +176,30 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 
 ### Fundamental Amplitude
 
-- [ ] Calculate sample peak in linear amplitude
-- [ ] Calculate sample peak in dBFS
-- [ ] Calculate headroom below 0 dBFS
-- [ ] Calculate peak-to-peak amplitude
-- [ ] Calculate mean absolute amplitude
-- [ ] Report minimum and maximum sample values
-- [ ] Report positive and negative peak values
-- [ ] Measure positive/negative peak asymmetry
-- [ ] Report the peak sample position
-- [ ] Report the peak time in seconds
+- [x] Calculate sample peak in linear amplitude
+- [x] Calculate sample peak in dBFS
+- [x] Calculate headroom below 0 dBFS
+- [x] Calculate peak-to-peak amplitude
+- [x] Calculate mean absolute amplitude
+- [x] Report minimum and maximum sample values
+- [x] Report positive and negative peak values
+- [x] Measure positive/negative peak asymmetry
+- [x] Report the peak sample position
+- [x] Report the peak time in seconds
 
 ### RMS and Crest Factor
 
-- [ ] Calculate whole-file RMS in linear amplitude
-- [ ] Calculate whole-file RMS in dBFS
-- [ ] Calculate crest factor
-- [ ] Add a configurable RMS-window duration
-- [ ] Calculate windowed RMS over time
-- [ ] Report maximum windowed RMS
-- [ ] Report minimum active windowed RMS
-- [ ] Report median windowed RMS
-- [ ] Report the time of maximum windowed RMS
-- [ ] Calculate windowed RMS range
-- [ ] Calculate RMS variability over time
+- [x] Calculate whole-file RMS in linear amplitude
+- [x] Calculate whole-file RMS in dBFS
+- [x] Calculate crest factor
+- [x] Add a configurable RMS-window duration
+- [x] Calculate windowed RMS over time
+- [x] Report maximum windowed RMS
+- [x] Report minimum active windowed RMS
+- [x] Report median windowed RMS
+- [x] Report the time of maximum windowed RMS
+- [x] Calculate windowed RMS range
+- [x] Calculate RMS variability over time
 
 ### Dynamic Envelope
 
