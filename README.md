@@ -114,8 +114,28 @@ python3 -m unittest \
 	tests/test_diagnostics.py \
 	tests/test_cli_plotting_regressions.py \
 	tests/test_cli_argument_matrix.py \
-	tests/test_error_code_regressions.py -v
+	tests/test_error_code_regressions.py \
+	tests/test_v030_regression_validation_track.py \
+	tests/test_v030_level_metrics.py -v
 ```
+
+## Code Organization by Version
+
+Implementation is organized by roadmap workstream under [src/audio_file_report/](src/audio_file_report):
+
+- [src/audio_file_report/v020_reliable_cli_file_handling/](src/audio_file_report/v020_reliable_cli_file_handling) — current production implementation (0.2.0)
+- [src/audio_file_report/v030_levels_dynamics/](src/audio_file_report/v030_levels_dynamics) — planned 0.3.0 package
+- [src/audio_file_report/v040_spectral_analysis/](src/audio_file_report/v040_spectral_analysis) — planned 0.4.0 package
+- [src/audio_file_report/v050_stereo_phase_spatial/](src/audio_file_report/v050_stereo_phase_spatial) — planned 0.5.0 package
+- [src/audio_file_report/v060_expanded_wav_support/](src/audio_file_report/v060_expanded_wav_support) — planned 0.6.0 package
+- [src/audio_file_report/v070_visual_exploration/](src/audio_file_report/v070_visual_exploration) — planned 0.7.0 package
+- [src/audio_file_report/v080_quality_control_profiles/](src/audio_file_report/v080_quality_control_profiles) — planned 0.8.0 package
+- [src/audio_file_report/v090_reports_batch_processing/](src/audio_file_report/v090_reports_batch_processing) — planned 0.9.0 package
+- [src/audio_file_report/v100_trusted_tested_installable/](src/audio_file_report/v100_trusted_tested_installable) — planned 1.0.0 package
+
+Compatibility modules remain at top level (for example [src/audio_file_report/app.py](src/audio_file_report/app.py), [src/audio_file_report/cli.py](src/audio_file_report/cli.py)) and forward to the active implementation so existing imports continue to work.
+
+Version-aligned script entrypoints are available in [scripts/](scripts), such as [scripts/run_020_reliable_cli_file_handling.py](scripts/run_020_reliable_cli_file_handling.py) and [scripts/run_040_spectral_analysis.py](scripts/run_040_spectral_analysis.py). These wrappers forward arguments to [audio_report.py](audio_report.py).
 
 ## Headless environments
 

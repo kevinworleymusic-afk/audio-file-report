@@ -319,11 +319,20 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 - [ ] Generate files with known DC offset
 - [ ] Generate left/right level-imbalance test files
 - [ ] Generate files with known leading, trailing, and interior silence
-- [ ] Verify peak and RMS results against analytical values
-- [ ] Verify event times against planted test conditions
+- [x] Verify peak and RMS results against analytical values
+- [x] Verify event times against planted clipping/silence test conditions
 - [ ] Explain that dBFS is not acoustic SPL
 
 ### Regression and Validation Track (0.3.0)
+
+- [x] Add initial unit tests for 0.3.0 level metrics (`tests/test_v030_level_metrics.py`)
+- [x] Validate the 0.3.0 level-metric test module with `python3 -m unittest`
+- [x] Add analytical truth-fixture regressions for peak, RMS, crest factor, headroom, and gain-preview math (`tests/test_v030_regression_validation_track.py`)
+- [x] Add threshold-boundary regressions for representative dBFS cutoffs (`tests/test_v030_regression_validation_track.py`)
+- [x] Add event-time localization regressions for clipping and silence regions (`tests/test_v030_regression_validation_track.py`)
+- [x] Add rolling-window RMS stability regressions for window/hop edge handling (`tests/test_v030_regression_validation_track.py`)
+- [x] Add channel-relationship and linked-gain regressions (`tests/test_v030_regression_validation_track.py`)
+- [x] Add deterministic fixture snapshot regressions for level-distribution outputs (`tests/test_v030_regression_validation_track.py`)
 
 - [ ] Add analytical truth-fixture tests for peak, RMS, crest factor, headroom, and gain-preview math
 - [ ] Add threshold-boundary tests for all level cutoffs (just below, exactly at, just above)

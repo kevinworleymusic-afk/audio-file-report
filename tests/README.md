@@ -31,6 +31,18 @@ Run error-code regression matrix:
 python3 -m unittest tests/test_error_code_regressions.py -v
 ```
 
+Run 0.3.0 level-metric unit tests:
+
+```bash
+python3 -m unittest tests/test_v030_level_metrics.py -v
+```
+
+Run 0.3.0 regression/validation track tests:
+
+```bash
+python3 -m unittest tests/test_v030_regression_validation_track.py -v
+```
+
 Or run the test module directly:
 
 ```bash
