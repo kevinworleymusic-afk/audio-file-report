@@ -230,35 +230,35 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 
 ### Clipping and Limiting Indicators
 
-- [ ] Count clipped samples
-- [ ] Calculate clipped-sample percentage
-- [ ] Count separate clipping events
-- [ ] Count positive clipping events
-- [ ] Count negative clipping events
-- [ ] Report the first and last clipping times
-- [ ] Report the longest consecutive clipping run
-- [ ] Report the duration of the longest clipping run
-- [ ] Add a configurable near-clipping threshold
-- [ ] Count near-clipping samples
-- [ ] Detect repeated identical peak values
-- [ ] Detect possible flat-topped regions
-- [ ] Report possible heavy limiting as a warning rather than a definitive diagnosis
+- [x] Count clipped samples
+- [x] Calculate clipped-sample percentage
+- [x] Count separate clipping events
+- [x] Count positive clipping events
+- [x] Count negative clipping events
+- [x] Report the first and last clipping times
+- [x] Report the longest consecutive clipping run
+- [x] Report the duration of the longest clipping run
+- [x] Add a configurable near-clipping threshold
+- [x] Count near-clipping samples
+- [x] Detect repeated identical peak values
+- [x] Detect possible flat-topped regions
+- [x] Report possible heavy limiting as a warning rather than a definitive diagnosis
 
 ### Silence and Dropout Analysis
 
-- [ ] Measure exact digital silence
-- [ ] Add configurable threshold-based silence
-- [ ] Add a minimum duration required for a silent region
-- [ ] Measure leading silence
-- [ ] Measure trailing silence
-- [ ] Count interior silent regions
-- [ ] Measure the longest silent region
-- [ ] Report the first and last silent-region times
-- [ ] Calculate total silence duration
-- [ ] Calculate silence percentage
-- [ ] Calculate non-silent (active) audio percentage within silence analysis scope
-- [ ] Detect possible audio dropouts
-- [ ] Suggest leading and trailing trim points
+- [x] Measure exact digital silence
+- [x] Add configurable threshold-based silence
+- [x] Add a minimum duration required for a silent region
+- [x] Measure leading silence
+- [x] Measure trailing silence
+- [x] Count interior silent regions
+- [x] Measure the longest silent region
+- [x] Report the first and last silent-region times
+- [x] Calculate total silence duration
+- [x] Calculate silence percentage
+- [x] Calculate non-silent (active) audio percentage within silence analysis scope
+- [x] Detect possible audio dropouts
+- [x] Suggest leading and trailing trim points
 
 ### DC and Waveform-Center Measurements
 
@@ -328,7 +328,9 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 - [x] Add initial unit tests for 0.3.0 level metrics (`tests/test_v030_level_metrics.py`)
 - [x] Validate the 0.3.0 level-metric test module with `python3 -m unittest`
 - [x] Add script-contract tests for Fundamental Amplitude (field/schema and peak-time checks) (`tests/test_v030_fundamental_amplitude_script.py`)
+- [x] Add script-contract tests for Clipping/Limiting indicators (field/schema and clipping-count behavior) (`tests/test_v030_clipping_limiting_indicators_script.py`)
 - [x] Add script-contract tests for RMS/Crest Factor (field/schema and window-configuration behavior) (`tests/test_v030_rms_crest_factor_script.py`)
+- [x] Add script-contract tests for Silence/Dropout analysis (field/schema and leading/trailing/dropout behavior) (`tests/test_v030_silence_dropout_analysis_script.py`)
 - [x] Add script-contract tests for Dynamic Envelope (field/schema, large-change detection, sustained-region detection) (`tests/test_v030_dynamic_envelope_script.py`)
 - [x] Add script-contract tests for Level Distribution (default/custom thresholds, crossing counts, and distribution outputs) (`tests/test_v030_level_distribution_script.py`)
 - [x] Add analytical truth-fixture regressions for peak, RMS, crest factor, headroom, and gain-preview math (`tests/test_v030_regression_validation_track.py`)

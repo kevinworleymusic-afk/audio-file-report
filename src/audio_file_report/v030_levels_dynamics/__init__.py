@@ -18,9 +18,11 @@ from .metrics import (
     normalize_to_full_scale,
 )
 from .fundamental_amplitude import analyze_fundamental_amplitude
+from .clipping_limiting_indicators import analyze_clipping_limiting_indicators
 from .dynamic_envelope import analyze_dynamic_envelope
 from .level_distribution import analyze_level_distribution
 from .rms_crest_factor import analyze_rms_crest_factor
+from .silence_dropout_analysis import analyze_silence_dropout_analysis
 
 __all__ = [
     "ClippingEvent",
@@ -39,7 +41,9 @@ __all__ = [
     "detect_silence_regions",
     "normalize_to_full_scale",
     "analyze_fundamental_amplitude",
+    "analyze_clipping_limiting_indicators",
     "analyze_dynamic_envelope",
     "analyze_level_distribution",
     "analyze_rms_crest_factor",
+    "analyze_silence_dropout_analysis",
 ]
