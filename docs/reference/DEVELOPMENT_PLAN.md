@@ -104,6 +104,15 @@ The purpose of version 0.2.0 is to make the existing analyzer easy, controllable
 - [x] Provide actionable suggestions for correctable errors
 - [x] Use clear operating-system exit codes (distinct codes for missing/permission/empty)
 
+### Test and Regression Coverage
+
+- [x] Add dedicated diagnostics tests for file validation and runtime dependency failures (`tests/test_diagnostics.py`)
+- [x] Add CLI/plotting regression tests for output-path creation and plotting-failure handling (`tests/test_cli_plotting_regressions.py`)
+- [x] Add CLI argument matrix regression tests for valid and invalid flag combinations (`tests/test_cli_argument_matrix.py`)
+- [x] Add error-code regression matrix tests to lock expected exit codes across common failure modes (`tests/test_error_code_regressions.py`)
+- [x] Validate new regression suites with `python3 -m unittest` module runs
+- [x] Add a single aggregate command in README to run diagnostics and regression modules together
+
 ### Improved Metadata
 
 - [x] Display the program version
@@ -151,6 +160,9 @@ Updates made in this workspace (refactor & docs):
 - [x] Log program/version, Python, OS, and dependency versions to `--log-file` (startup header)
 - [x] Log active command-line options and resolved paths in debug logs
 - [x] Include HH:MM:SS duration in debug logs and human-readable reports
+- [x] Add and validate regression modules: `test_cli_plotting_regressions.py`, `test_cli_argument_matrix.py`, and `test_error_code_regressions.py`
+- [x] Expand tests README with direct commands for each regression module
+- [x] Add one-command diagnostics/regression test invocation to root README
 
 ## Version 0.3.0 — Level and Dynamics Measurements
 
@@ -311,6 +323,19 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 - [ ] Verify event times against planted test conditions
 - [ ] Explain that dBFS is not acoustic SPL
 
+### Regression and Validation Track (0.3.0)
+
+- [ ] Add analytical truth-fixture tests for peak, RMS, crest factor, headroom, and gain-preview math
+- [ ] Add threshold-boundary tests for all level cutoffs (just below, exactly at, just above)
+- [ ] Add event-time localization regressions for clipping, silence, dropout, and loud/quiet segment detection
+- [ ] Add rolling-window stability tests for window/hop combinations and end-of-file edge handling
+- [ ] Add channel-relationship regressions for left/right imbalance, linked gain, and channel-specific reporting
+- [ ] Add deterministic fixture snapshots for level-distribution outputs to catch drift in reported percentages
+- [ ] Add CLI matrix coverage for all new level/dynamics options and precedence rules
+- [ ] Add exit-code and actionable-error regressions for new failure modes introduced by level features
+- [ ] Add lightweight runtime guardrails for representative short/medium WAV files to catch large performance regressions
+- [ ] Add end-to-end level-analysis smoke tests (read -> analyze -> report -> optional plot/log)
+
 ## Version 0.4.0 — Spectral Analysis
 
 ### Differentiation Goals
@@ -358,6 +383,19 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 - [ ] Add a left/right spectral-difference graph
 - [ ] Display spectral difference in decibels
 - [ ] Identify frequency regions with major channel differences
+
+### Regression and Validation Track (0.4.0)
+
+- [ ] Add frequency-accuracy fixture tests for single-tone and multi-tone signals across FFT sizes and window types
+- [ ] Add peak-selection regressions for ranking, minimum-separation rules, and label stability
+- [ ] Add spectral-energy consistency tests for averaging, smoothing, and user-defined band calculations
+- [ ] Add spectrogram contract tests for matrix shape, axis bounds, and configured dynamic-range handling
+- [ ] Add plotting artifact regressions for spectrum/spectrogram save behavior, overwrite rules, and output path resolution
+- [ ] Add visual regression baselines (tolerant image comparison) for key plotting modes and axis-label conventions
+- [ ] Add numeric table export regressions for band-energy and spectral-summary outputs (format and ordering contracts)
+- [ ] Add CLI matrix coverage for spectral options (FFT size, window, ranges, smoothing, averaging, export toggles)
+- [ ] Add robustness tests for malformed WAV metadata and unexpected header layouts that affect spectral paths
+- [ ] Add end-to-end spectral smoke suites validated in headless and interactive-capable environments
 - [ ] Add an audio-spectrum waterfall plot over time
 - [ ] Allow adjustable spacing between waterfall slices
 - [ ] Allow the number of waterfall slices to be configured
