@@ -5,6 +5,28 @@ Prerequisites
 - Python 3.9+ (the repo was tested with 3.14)
 - NumPy and Matplotlib are optional for some tests; most diagnostic tests exercise validation logic only.
 
+Run all test modules (all versions)
+
+```bash
+python3 -m unittest discover -s tests -p "test_*.py" -v
+```
+
+Run tests by version
+
+```bash
+# Version 0.2.x diagnostics and CLI/plotting regressions
+python3 -m unittest \
+	tests/test_diagnostics.py \
+	tests/test_cli_plotting_regressions.py \
+	tests/test_cli_argument_matrix.py \
+	tests/test_error_code_regressions.py -v
+
+# Version 0.3.x level and dynamics regressions
+python3 -m unittest \
+	tests/test_v030_level_metrics.py \
+	tests/test_v030_regression_validation_track.py -v
+```
+
 Run the test module
 
 From the repository root:

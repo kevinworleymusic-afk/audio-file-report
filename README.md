@@ -105,7 +105,33 @@ python audio_report.py assets/audio/test_audio.wav --log-file debug.log --debug
 
 For the complete option list and all valid command combinations, see [docs/reference/USER_MANUAL.md](docs/reference/USER_MANUAL.md).
 
-## Run all diagnostics and regression tests
+## Run all tests (all versions)
+
+From the repository root, run every test module:
+
+```bash
+python3 -m unittest discover -s tests -p "test_*.py" -v
+```
+
+## Run tests by version
+
+Run the current implemented version tracks separately:
+
+```bash
+# Version 0.2.x diagnostics and CLI/plotting regressions
+python3 -m unittest \
+	tests/test_diagnostics.py \
+	tests/test_cli_plotting_regressions.py \
+	tests/test_cli_argument_matrix.py \
+	tests/test_error_code_regressions.py -v
+
+# Version 0.3.x level and dynamics regressions
+python3 -m unittest \
+	tests/test_v030_level_metrics.py \
+	tests/test_v030_regression_validation_track.py -v
+```
+
+## Run all diagnostics and regression tests (explicit module list)
 
 From the repository root, run:
 
