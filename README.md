@@ -105,6 +105,18 @@ python audio_report.py assets/audio/test_audio.wav --log-file debug.log --debug
 
 For the complete option list and all valid command combinations, see [docs/reference/USER_MANUAL.md](docs/reference/USER_MANUAL.md).
 
+## Run all diagnostics and regression tests
+
+From the repository root, run:
+
+```bash
+python3 -m unittest \
+	tests/test_diagnostics.py \
+	tests/test_cli_plotting_regressions.py \
+	tests/test_cli_argument_matrix.py \
+	tests/test_error_code_regressions.py -v
+```
+
 ## Headless environments
 
 If you are running in CI, Docker, or another headless environment, use save mode rather than interactive display:

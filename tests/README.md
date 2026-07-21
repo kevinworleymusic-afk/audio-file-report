@@ -19,6 +19,18 @@ Run regression tests for CLI/plotting fixes:
 python3 -m unittest tests/test_cli_plotting_regressions.py -v
 ```
 
+Run CLI argument matrix regressions:
+
+```bash
+python3 -m unittest tests/test_cli_argument_matrix.py -v
+```
+
+Run error-code regression matrix:
+
+```bash
+python3 -m unittest tests/test_error_code_regressions.py -v
+```
+
 Or run the test module directly:
 
 ```bash
