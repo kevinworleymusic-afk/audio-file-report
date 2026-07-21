@@ -24,6 +24,8 @@ python3 -m unittest \
 # Version 0.3.x level and dynamics regressions
 python3 -m unittest \
 	tests/test_v030_fundamental_amplitude_script.py \
+	tests/test_v030_dynamic_envelope_script.py \
+	tests/test_v030_level_distribution_script.py \
 	tests/test_v030_rms_crest_factor_script.py \
 	tests/test_v030_level_metrics.py \
 	tests/test_v030_regression_validation_track.py -v
@@ -71,6 +73,18 @@ Run 0.3.0 RMS/Crest script tests:
 
 ```bash
 python3 -m unittest tests/test_v030_rms_crest_factor_script.py -v
+```
+
+Run 0.3.0 dynamic envelope script tests:
+
+```bash
+python3 -m unittest tests/test_v030_dynamic_envelope_script.py -v
+```
+
+Run 0.3.0 level distribution script tests:
+
+```bash
+python3 -m unittest tests/test_v030_level_distribution_script.py -v
 ```
 
 Run 0.3.0 regression/validation track tests:

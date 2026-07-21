@@ -203,30 +203,30 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 
 ### Dynamic Envelope
 
-- [ ] Calculate a peak envelope
-- [ ] Calculate an RMS envelope
-- [ ] Calculate crest factor over time
-- [ ] Identify the loudest continuous region
-- [ ] Identify the quietest active region
-- [ ] Report the times of the loudest and quietest regions
-- [ ] Measure the difference between loudest and quietest active regions
-- [ ] Detect large level changes
-- [ ] Report the largest upward level change
-- [ ] Report the largest downward level change
-- [ ] Identify sustained high-level regions
-- [ ] Identify sustained low-level regions
+- [x] Calculate a peak envelope
+- [x] Calculate an RMS envelope
+- [x] Calculate crest factor over time
+- [x] Identify the loudest continuous region
+- [x] Identify the quietest active region
+- [x] Report the times of the loudest and quietest regions
+- [x] Measure the difference between loudest and quietest active regions
+- [x] Detect large level changes
+- [x] Report the largest upward level change
+- [x] Report the largest downward level change
+- [x] Identify sustained high-level regions
+- [x] Identify sustained low-level regions
 
 ### Level Distribution
 
-- [ ] Report time spent above -3 dBFS
-- [ ] Report time spent above -6 dBFS
-- [ ] Report time spent above -12 dBFS
-- [ ] Report time spent below -40 dBFS
-- [ ] Report time spent below -60 dBFS
-- [ ] Allow configurable level thresholds
-- [ ] Calculate active-audio percentage
-- [ ] Count threshold crossings
-- [ ] Identify the most commonly occupied level range
+- [x] Report time spent above -3 dBFS
+- [x] Report time spent above -6 dBFS
+- [x] Report time spent above -12 dBFS
+- [x] Report time spent below -40 dBFS
+- [x] Report time spent below -60 dBFS
+- [x] Allow configurable level thresholds
+- [x] Calculate active-audio percentage
+- [x] Count threshold crossings
+- [x] Identify the most commonly occupied level range
 
 ### Clipping and Limiting Indicators
 
@@ -256,7 +256,7 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 - [ ] Report the first and last silent-region times
 - [ ] Calculate total silence duration
 - [ ] Calculate silence percentage
-- [ ] Calculate active-audio percentage
+- [ ] Calculate non-silent (active) audio percentage within silence analysis scope
 - [ ] Detect possible audio dropouts
 - [ ] Suggest leading and trailing trim points
 
@@ -327,19 +327,24 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 
 - [x] Add initial unit tests for 0.3.0 level metrics (`tests/test_v030_level_metrics.py`)
 - [x] Validate the 0.3.0 level-metric test module with `python3 -m unittest`
+- [x] Add script-contract tests for Fundamental Amplitude (field/schema and peak-time checks) (`tests/test_v030_fundamental_amplitude_script.py`)
+- [x] Add script-contract tests for RMS/Crest Factor (field/schema and window-configuration behavior) (`tests/test_v030_rms_crest_factor_script.py`)
+- [x] Add script-contract tests for Dynamic Envelope (field/schema, large-change detection, sustained-region detection) (`tests/test_v030_dynamic_envelope_script.py`)
+- [x] Add script-contract tests for Level Distribution (default/custom thresholds, crossing counts, and distribution outputs) (`tests/test_v030_level_distribution_script.py`)
 - [x] Add analytical truth-fixture regressions for peak, RMS, crest factor, headroom, and gain-preview math (`tests/test_v030_regression_validation_track.py`)
 - [x] Add threshold-boundary regressions for representative dBFS cutoffs (`tests/test_v030_regression_validation_track.py`)
 - [x] Add event-time localization regressions for clipping and silence regions (`tests/test_v030_regression_validation_track.py`)
 - [x] Add rolling-window RMS stability regressions for window/hop edge handling (`tests/test_v030_regression_validation_track.py`)
 - [x] Add channel-relationship and linked-gain regressions (`tests/test_v030_regression_validation_track.py`)
 - [x] Add deterministic fixture snapshot regressions for level-distribution outputs (`tests/test_v030_regression_validation_track.py`)
+- [x] Validate 0.3.0 script and regression modules with direct module runs and full `unittest discover`
 
-- [ ] Add analytical truth-fixture tests for peak, RMS, crest factor, headroom, and gain-preview math
-- [ ] Add threshold-boundary tests for all level cutoffs (just below, exactly at, just above)
-- [ ] Add event-time localization regressions for clipping, silence, dropout, and loud/quiet segment detection
-- [ ] Add rolling-window stability tests for window/hop combinations and end-of-file edge handling
-- [ ] Add channel-relationship regressions for left/right imbalance, linked gain, and channel-specific reporting
-- [ ] Add deterministic fixture snapshots for level-distribution outputs to catch drift in reported percentages
+- [ ] Expand analytical truth-fixture coverage to include additional fixtures and edge-case signals
+- [ ] Expand threshold-boundary coverage to all planned level cutoffs (just below, exactly at, just above)
+- [ ] Extend event-time localization regressions to include dropout and loud/quiet segment detection
+- [ ] Expand rolling-window stability tests across broader window/hop matrices and end-of-file edge handling
+- [ ] Extend channel-relationship regressions to cover left/right imbalance scenarios and channel-specific reporting detail
+- [ ] Expand deterministic fixture snapshots to additional level-distribution scenarios to catch output drift
 - [ ] Add CLI matrix coverage for all new level/dynamics options and precedence rules
 - [ ] Add exit-code and actionable-error regressions for new failure modes introduced by level features
 - [ ] Add lightweight runtime guardrails for representative short/medium WAV files to catch large performance regressions
@@ -370,7 +375,6 @@ The purpose of version 0.3.0 is to measure how high, how average, how variable, 
 - [ ] Calculate spectral bandwidth
 - [ ] Measure energy in user-defined frequency bands
 - [ ] Add octave or fractional-octave smoothing
-- [ ] Add left and right spectrograms
 - [ ] Save spectrum and spectrogram plots
 
 ### Frequency Visualizations

@@ -18,6 +18,8 @@ from .metrics import (
     normalize_to_full_scale,
 )
 from .fundamental_amplitude import analyze_fundamental_amplitude
+from .dynamic_envelope import analyze_dynamic_envelope
+from .level_distribution import analyze_level_distribution
 from .rms_crest_factor import analyze_rms_crest_factor
 
 __all__ = [
@@ -37,5 +39,7 @@ __all__ = [
     "detect_silence_regions",
     "normalize_to_full_scale",
     "analyze_fundamental_amplitude",
+    "analyze_dynamic_envelope",
+    "analyze_level_distribution",
     "analyze_rms_crest_factor",
 ]

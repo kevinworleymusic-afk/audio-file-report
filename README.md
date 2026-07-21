@@ -128,6 +128,8 @@ python3 -m unittest \
 # Version 0.3.x level and dynamics regressions
 python3 -m unittest \
 	tests/test_v030_fundamental_amplitude_script.py \
+	tests/test_v030_dynamic_envelope_script.py \
+	tests/test_v030_level_distribution_script.py \
 	tests/test_v030_rms_crest_factor_script.py \
 	tests/test_v030_level_metrics.py \
 	tests/test_v030_regression_validation_track.py -v
@@ -144,6 +146,8 @@ python3 -m unittest \
 	tests/test_cli_argument_matrix.py \
 	tests/test_error_code_regressions.py \
 	tests/test_v030_fundamental_amplitude_script.py \
+	tests/test_v030_dynamic_envelope_script.py \
+	tests/test_v030_level_distribution_script.py \
 	tests/test_v030_rms_crest_factor_script.py \
 	tests/test_v030_regression_validation_track.py \
 	tests/test_v030_level_metrics.py -v
