@@ -63,3 +63,24 @@ The written solution identifies the system’s high-pass behavior and preserves 
 - Plot the filter coefficients’ response rather than treating arbitrary program audio as a filter.
 - Correct and complete the difference-equation implementation.
 - Add reproducible audio fixtures or generate test signals within each test.
+
+## Frequency-domain IIR filter
+
+`freqFilter.m` attempts to implement:
+
+`Y[k] = H[k]X[k]`
+
+from arbitrary feedforward coefficients `b`, feedback coefficients `a`, and an input signal `x`. The associated `testScript.m` compares its impulse response with MATLAB’s built-in `filter` function.
+
+The test script records that the function runs but produces incorrect numerical results. Important issues in the preserved implementation include:
+
+- The frequency-bin array should span `0:N-1`.
+- Each coefficient term must be evaluated across every frequency bin.
+- The numerator and denominator should each become length-`N` complex spectra.
+- The current use of `exp(k)` is a real exponential and does not represent the required complex delay term.
+- Coefficient-delay arrays contain an extra element.
+- The implementation should guard against division by zero or near-zero denominator values.
+
+A corrected vectorized implementation would evaluate the complex exponentials for all bins and coefficient delays, sum numerator and denominator terms independently, multiply the input spectrum by their ratio, and recover the time-domain result with an inverse FFT.
+
+Preserving the original function alongside this review demonstrates an important software-engineering skill: recognizing when code executes without implementing the intended mathematics correctly.

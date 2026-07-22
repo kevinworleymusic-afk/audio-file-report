@@ -11,6 +11,7 @@ Implement foundational DSP operations in MATLAB through three related exercises:
 1. Synthesize pink noise from generated white noise.
 2. Design reusable FIR band-pass and band-stop filter functions.
 3. Analyze a discrete-time FIR system using its difference equation, transfer function, frequency response, and zeros.
+4. Implement and test frequency-domain IIR filtering from feedforward and feedback coefficients.
 
 ## Project contents
 
@@ -22,6 +23,8 @@ Implement foundational DSP operations in MATLAB through three related exercises:
 - [`problem2.m`](src/problem2.m) — impulse-based test script for the band-pass and band-stop functions
 - [`bandTest.m`](src/bandTest.m) — audio-file test harness for the reusable filter functions
 - [`problem3HW.m`](src/problem3HW.m) — preserved incomplete experimental script for the difference-equation problem
+- [`freqFilter.m`](src/freqFilter.m) — original frequency-domain IIR filter implementation
+- [`testScript.m`](src/testScript.m) — impulse-based comparison with MATLAB’s built-in `filter` function
 
 ### Audio output
 
@@ -32,6 +35,7 @@ Implement foundational DSP operations in MATLAB through three related exercises:
 - [Homework 3 assignment](docs/homework-3-assignment.pdf)
 - [Problem 3 derivation and block diagram](docs/problem-3-part-1.pdf)
 - [Problem 3 response and zero analysis](docs/problem-3-part-2.pdf)
+- [Quiz 4 frequency-domain IIR assignment](docs/quiz-4-frequency-filter.pdf)
 
 ## DSP concepts demonstrated
 
@@ -46,10 +50,12 @@ Implement foundational DSP operations in MATLAB through three related exercises:
 - Difference equations
 - Z-transforms and transfer functions
 - Pole-zero reasoning
+- Frequency-domain IIR filtering
+- Complex transfer-function evaluation
 - Modular MATLAB functions and test scripts
 
 ## Technical status
 
-The original coursework is preserved rather than silently rewritten. The band-pass and band-stop functions demonstrate the intended serial and parallel structures. The pink-noise script produces a valid WAV file, although its gain curve and output level would benefit from revision. The Problem 3 MATLAB script is incomplete, while the accompanying written work preserves the block diagram, transfer-function derivation, response classification, and zero analysis.
+The original coursework is preserved rather than silently rewritten. The band-pass and band-stop functions demonstrate the intended serial and parallel structures. The pink-noise script produces a valid WAV file, although its gain curve and output level would benefit from revision. The Problem 3 MATLAB script is incomplete, while the accompanying written work preserves the block diagram, transfer-function derivation, response classification, and zero analysis. The frequency-domain IIR function executes, but its original test script notes that the numerical result is incorrect; both files are retained as developmental evidence and reviewed in the technical notes.
 
 See [Technical Notes](TECHNICAL-NOTES.md) for a concise engineering review and proposed improvements.
