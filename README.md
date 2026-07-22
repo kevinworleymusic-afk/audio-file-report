@@ -26,12 +26,6 @@ The repository is organized by purpose:
 - [docs/product/](docs/product) — product differentiation notes
 - [tests/](tests) — diagnostics tests
 
-## Additional MATLAB project
-
-This repository also preserves a separate MATLAB coursework project demonstrating foundational audio DSP programming:
-
-- [MATLAB Project — Audio DSP Fundamentals](matlab-projects/audio-dsp-fundamentals/README.md) — pink-noise synthesis, FIR band-pass and band-stop filters, convolution, and discrete-time system analysis
-
 ## Requirements
 
 - Python 3.9 or newer (Python 3.10+ is recommended)
