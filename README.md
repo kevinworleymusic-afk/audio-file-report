@@ -4,7 +4,7 @@ Current release: 0.2.0
 
 Audio File Report is a [Python command-line tool](src/audio_file_report/v020_reliable_cli_file_handling/) for [analyzing WAV files](docs/reference/USER_MANUAL.md) and generating [left/right frequency-spectrum plots](assets/plots/). It reports [audio metadata](docs/reference/USER_MANUAL.md) such as file size, encoding, channel layout, sample rate, bit depth, duration, and bitrate estimates, then optionally saves or displays a spectrum chart.
 
-## What the project currently does
+## What the Project Currently Does
 
 - [Reads and validates WAV files](src/audio_file_report/v020_reliable_cli_file_handling/) before analysis
 - [Reports audio metadata](docs/reference/USER_MANUAL.md) in compact, verbose, or timed formats
@@ -13,7 +13,7 @@ Audio File Report is a [Python command-line tool](src/audio_file_report/v020_rel
 - [Writes detailed diagnostics](tests/test_diagnostics.py) to a log file when requested
 - Includes [conservative validation](tests/test_error_code_regressions.py) to detect truncated or corrupted files
 
-## Project structure
+## Project Structure
 
 The repository is organized by purpose:
 
@@ -69,7 +69,7 @@ python audio_report.py -h
 
 If the help output appears, the setup is working.
 
-## Quick start
+## Quick Start
 
 Run the tool on the sample WAV file included in the repository:
 
@@ -79,7 +79,7 @@ python audio_report.py assets/audio/test_audio.wav --plot save --dpi-choice scre
 
 This will print a metadata report and save a spectrum plot by default.
 
-## Usage overview
+## Usage Overview
 
 The tool expects one positional argument: the path to a WAV file.
 
@@ -87,7 +87,7 @@ The tool expects one positional argument: the path to a WAV file.
 python audio_report.py /path/to/your_file.wav
 ```
 
-### Common commands
+### Common Commands
 
 ```bash
 # One-line summary
@@ -105,7 +105,7 @@ python audio_report.py assets/audio/test_audio.wav --log-file debug.log --debug
 
 For the complete option list and all valid command combinations, see [docs/reference/USER_MANUAL.md](docs/reference/USER_MANUAL.md).
 
-## Run all tests (all versions)
+## Run All Tests (All Versions)
 
 From the repository root, run every test module:
 
@@ -113,7 +113,7 @@ From the repository root, run every test module:
 python3 -m unittest discover -s tests -p "test_*.py" -v
 ```
 
-## Run tests by version
+## Run Tests by Version
 
 Run the current implemented version tracks separately:
 
@@ -139,7 +139,7 @@ python3 -m unittest \
 	tests/test_v030_regression_validation_track.py -v
 ```
 
-## Run all diagnostics and regression tests (explicit module list)
+## Run All Diagnostics and Regression Tests (Explicit Module List)
 
 From the repository root, run:
 
@@ -179,7 +179,7 @@ Compatibility modules remain at top level (for example [src/audio_file_report/ap
 
 Version-aligned script entrypoints are available in [scripts/](scripts), such as [scripts/run_020/run_020_reliable_cli_file_handling.py](scripts/run_020/run_020_reliable_cli_file_handling.py), [scripts/run_030/run_030_levels_dynamics.py](scripts/run_030/run_030_levels_dynamics.py), and [scripts/run_040_spectral_analysis.py](scripts/run_040_spectral_analysis.py). These wrappers forward arguments to [audio_report.py](audio_report.py).
 
-## Headless environments
+## Headless Environments
 
 If you are running in CI, Docker, or another headless environment, use save mode rather than interactive display:
 
@@ -193,7 +193,7 @@ If Matplotlib backend issues appear, try:
 MPLBACKEND=Agg python audio_report.py assets/audio/test_audio.wav --plot save
 ```
 
-## Notes and limitations
+## Notes and Limitations
 
 - The [tool currently focuses on 16-bit stereo PCM WAV files](src/audio_file_report/v020_reliable_cli_file_handling/) for spectrum analysis
 - [Validation is conservative](tests/test_error_code_regressions.py) and checks headers, frame counts, and frame reads
