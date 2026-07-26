@@ -2,16 +2,16 @@
 
 Current release: 0.2.0
 
-Audio File Report is a Python command-line tool for analyzing WAV files and generating left/right frequency spectrum plots. It reports metadata such as file size, encoding, channel layout, sample rate, bit depth, duration, and bitrate estimates, then optionally saves or displays a spectrum chart.
+Audio File Report is a [Python command-line tool](src/audio_file_report/v020_reliable_cli_file_handling/) for [analyzing WAV files](docs/reference/USER_MANUAL.md) and generating [left/right frequency-spectrum plots](assets/plots/). It reports [audio metadata](docs/reference/USER_MANUAL.md) such as file size, encoding, channel layout, sample rate, bit depth, duration, and bitrate estimates, then optionally saves or displays a spectrum chart.
 
 ## What the project currently does
 
-- Reads and validates WAV files before analysis
-- Reports audio metadata in compact, verbose, or timed formats
-- Generates stereo spectrum plots for the left and right channels
-- Supports interactive display or file-based output
-- Writes detailed diagnostics to a log file when requested
-- Includes conservative validation to detect truncated or corrupted files
+- [Reads and validates WAV files](src/audio_file_report/v020_reliable_cli_file_handling/) before analysis
+- [Reports audio metadata](docs/reference/USER_MANUAL.md) in compact, verbose, or timed formats
+- [Generates stereo spectrum plots](assets/plots/) for the left and right channels
+- [Supports interactive display or file-based output](docs/reference/USER_MANUAL.md)
+- [Writes detailed diagnostics](tests/test_diagnostics.py) to a log file when requested
+- Includes [conservative validation](tests/test_error_code_regressions.py) to detect truncated or corrupted files
 
 ## Project structure
 
@@ -34,8 +34,8 @@ The repository is organized by purpose:
 
 Current runtime dependencies:
 
-- NumPy for FFT and numerical processing
-- Matplotlib for spectrum plot rendering
+- [NumPy](requirements.txt) for FFT and numerical processing
+- [Matplotlib](requirements.txt) for spectrum plot rendering
 
 ## Installation
 
@@ -195,9 +195,9 @@ MPLBACKEND=Agg python audio_report.py assets/audio/test_audio.wav --plot save
 
 ## Notes and limitations
 
-- The tool currently focuses on 16-bit stereo PCM WAV files for spectrum analysis
-- Validation is conservative and checks headers, frame counts, and frame reads
-- The program will auto-rename output files if a target already exists unless `--overwrite` is used
+- The [tool currently focuses on 16-bit stereo PCM WAV files](src/audio_file_report/v020_reliable_cli_file_handling/) for spectrum analysis
+- [Validation is conservative](tests/test_error_code_regressions.py) and checks headers, frame counts, and frame reads
+- The program will [auto-rename output files](tests/test_cli_plotting_regressions.py) if a target already exists unless `--overwrite` is used
 
 ## Documentation
 
