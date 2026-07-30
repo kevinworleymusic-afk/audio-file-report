@@ -8,12 +8,14 @@ Review the [active application package](src/audio_file_report/v020_reliable_cli_
 
 ## What the Project Currently Does
 
-- [Reads and validates WAV files](src/audio_file_report/v020_reliable_cli_file_handling/) before analysis
-- [Reports audio metadata](docs/reference/USER_MANUAL.md) in compact, verbose, or timed formats
-- [Generates stereo spectrum plots](assets/plots/) for the left and right channels
-- [Supports interactive display or file-based output](docs/reference/USER_MANUAL.md)
-- [Writes detailed diagnostics](tests/test_diagnostics.py) to a log file when requested
-- Includes [conservative validation](tests/test_error_code_regressions.py) to detect truncated or corrupted files
+- Reads and validates WAV files before analysis
+- Reports audio metadata in compact, verbose, or timed formats
+- Generates stereo spectrum plots for the left and right channels
+- Supports interactive display or file-based output
+- Writes detailed diagnostics to a log file when requested
+- Includes conservative validation to detect truncated or corrupted files
+
+Review the [active implementation](src/audio_file_report/v020_reliable_cli_file_handling/), [user manual](docs/reference/USER_MANUAL.md), [sample spectrum plots](assets/plots/), [diagnostics tests](tests/test_diagnostics.py), and [validation regressions](tests/test_error_code_regressions.py).
 
 ## Project Structure
 
@@ -32,12 +34,14 @@ The repository is organized by purpose:
 
 - Python 3.9 or newer (Python 3.10+ is recommended)
 - A terminal with network access for installing dependencies
-- The runtime dependencies listed in [requirements.txt](requirements.txt)
+- The listed runtime dependencies
 
 Current runtime dependencies:
 
-- [NumPy](requirements.txt) for FFT and numerical processing
-- [Matplotlib](requirements.txt) for spectrum plot rendering
+- NumPy for FFT and numerical processing
+- Matplotlib for spectrum plot rendering
+
+Review the [runtime requirements](requirements.txt) and [setup guide](docs/reference/SETUP.md).
 
 ## Installation
 
@@ -105,7 +109,7 @@ python audio_report.py assets/audio/test_audio.wav --plot-file spectrum.png
 python audio_report.py assets/audio/test_audio.wav --log-file debug.log --debug
 ```
 
-For the complete option list and all valid command combinations, see [docs/reference/USER_MANUAL.md](docs/reference/USER_MANUAL.md).
+Review the [complete option list and valid command combinations](docs/reference/USER_MANUAL.md).
 
 ## Run All Tests (All Versions)
 
@@ -165,7 +169,7 @@ python3 -m unittest \
 
 ## Code Organization by Version
 
-Implementation is organized by roadmap workstream under [src/audio_file_report/](src/audio_file_report):
+Implementation is organized by roadmap workstream:
 
 - [src/audio_file_report/v020_reliable_cli_file_handling/](src/audio_file_report/v020_reliable_cli_file_handling) — current production implementation (0.2.0)
 - [src/audio_file_report/v030_levels_dynamics/](src/audio_file_report/v030_levels_dynamics) — planned 0.3.0 package
@@ -177,9 +181,11 @@ Implementation is organized by roadmap workstream under [src/audio_file_report/]
 - [src/audio_file_report/v090_reports_batch_processing/](src/audio_file_report/v090_reports_batch_processing) — planned 0.9.0 package
 - [src/audio_file_report/v100_trusted_tested_installable/](src/audio_file_report/v100_trusted_tested_installable) — planned 1.0.0 package
 
-Compatibility modules remain at top level (for example [src/audio_file_report/app.py](src/audio_file_report/app.py), [src/audio_file_report/cli.py](src/audio_file_report/cli.py)) and forward to the active implementation so existing imports continue to work.
+Compatibility modules remain at top level and forward to the active implementation so existing imports continue to work.
 
-Version-aligned script entrypoints are available in [scripts/](scripts), such as [scripts/run_020/run_020_reliable_cli_file_handling.py](scripts/run_020/run_020_reliable_cli_file_handling.py), [scripts/run_030/run_030_levels_dynamics.py](scripts/run_030/run_030_levels_dynamics.py), and [scripts/run_040_spectral_analysis.py](scripts/run_040_spectral_analysis.py). These wrappers forward arguments to [audio_report.py](audio_report.py).
+Version-aligned script entrypoints are available for the 0.2.0, 0.3.0, and 0.4.0 workstreams. These wrappers forward arguments to the root compatibility entrypoint.
+
+Review the [package structure](src/audio_file_report/), [compatibility application module](src/audio_file_report/app.py), [compatibility CLI module](src/audio_file_report/cli.py), [version-aligned scripts](scripts/), and [root entrypoint](audio_report.py).
 
 ## Headless Environments
 
@@ -197,9 +203,11 @@ MPLBACKEND=Agg python audio_report.py assets/audio/test_audio.wav --plot save
 
 ## Notes and Limitations
 
-- The [tool currently focuses on 16-bit stereo PCM WAV files](src/audio_file_report/v020_reliable_cli_file_handling/) for spectrum analysis
-- [Validation is conservative](tests/test_error_code_regressions.py) and checks headers, frame counts, and frame reads
-- The program will [auto-rename output files](tests/test_cli_plotting_regressions.py) if a target already exists unless `--overwrite` is used
+- The tool currently focuses on 16-bit stereo PCM WAV files for spectrum analysis.
+- Validation is conservative and checks headers, frame counts, and frame reads.
+- The program auto-renames output files if a target already exists unless `--overwrite` is used.
+
+Review the [current implementation](src/audio_file_report/v020_reliable_cli_file_handling/), [validation regressions](tests/test_error_code_regressions.py), and [CLI/plotting regressions](tests/test_cli_plotting_regressions.py).
 
 ## Documentation
 
