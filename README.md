@@ -2,7 +2,9 @@
 
 Current release: 0.2.0
 
-Audio File Report is a [Python command-line tool](src/audio_file_report/v020_reliable_cli_file_handling/) for [analyzing WAV files](docs/reference/USER_MANUAL.md) and generating [left/right frequency-spectrum plots](assets/plots/). It reports [audio metadata](docs/reference/USER_MANUAL.md) such as file size, encoding, channel layout, sample rate, bit depth, duration, and bitrate estimates, then optionally saves or displays a spectrum chart.
+Audio File Report is a Python command-line tool for analyzing WAV files and generating left/right frequency-spectrum plots. It reports audio metadata such as file size, encoding, channel layout, sample rate, bit depth, duration, and bitrate estimates, then optionally saves or displays a spectrum chart.
+
+Review the [active application package](src/audio_file_report/v020_reliable_cli_file_handling/), [setup guide](docs/reference/SETUP.md), [user manual](docs/reference/USER_MANUAL.md), [sample spectrum plots](assets/plots/), [automated tests](tests/), and [development roadmap](docs/reference/ROADMAP.md).
 
 ## What the Project Currently Does
 
